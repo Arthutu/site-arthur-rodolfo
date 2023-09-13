@@ -1,0 +1,51 @@
+---
+import { Icon } from "astro-icon";
+---
+
+<theme-toggle>
+    <button
+        class="flex items-center gap-3 rounded-full p-2 shadow-[inset_0_0_0_1px_rgb(30,58,138,.5)]">
+        <span class="sr-only">Dark theme</span>
+
+        <Icon
+            class="z-20 h-4 w-4 text-white dark:z-0 dark:opacity-20"
+            name="ri:sun-line"
+        />
+
+        <span
+            class="absolute z-10 h-8 w-8 -translate-x-2 rounded-full bg-blue-900 transition duration-500 ease-in-out dark:translate-x-5">
+        </span>
+
+        <Icon
+            class="z-0 h-4 w-4 opacity-20 dark:z-20 dark:opacity-100"
+            name="ri:moon-clear-line"
+        />
+    </button>
+</theme-toggle>
+
+<script>
+    class ThemeToggle extends HTMLElement {
+        constructor() {
+            super();
+
+            const button = this.querySelector("button")!;
+
+            const setTheme = (dark: boolean) => {
+                document.documentElement.classList[dark ? "add" : "remove"](
+                    "dark"
+                );
+                button.setAttribute("aria-pressed", String(dark));
+            };
+
+            button.addEventListener("click", () => setTheme(!this.isDark()));
+
+            setTheme(this.isDark());
+        }
+
+        isDark() {
+            return document.documentElement.classList.contains("dark");
+        }
+    }
+
+    customElements.define("theme-toggle", ThemeToggle);
+</script>
