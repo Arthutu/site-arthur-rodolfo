@@ -1,0 +1,58 @@
+---
+import OpenInNewTabIcon from "./OpenInNewTabIcon.astro";
+import Pill from "./Pill.astro";
+
+interface Props {
+    role: string;
+    company: string;
+    companyUrl: string;
+    from: string;
+    to: string;
+    skills: string[];
+}
+
+const { role, company, companyUrl, from, to, skills } = Astro.props;
+---
+
+<div class="flex flex-col gap-3">
+    <header>
+        <h2 class="flex text-sm font-bold">
+            {role}
+        </h2>
+        <h2 class="text-sm">
+            <a
+                class="flex gap-1"
+                href={companyUrl}
+                target="_blank"
+                aria-label=`${role} at ${company}`>
+                {company}
+                <OpenInNewTabIcon />
+            </a>
+        </h2>
+        <h6 class="text-xs text-slate-600 dark:text-slate-400">
+            {from} - {to}
+        </h6>
+    </header>
+
+    <p class="text-sm">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+        occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+        mollit anim id est laborum.
+    </p>
+
+    <ul class="flex flex-wrap gap-2">
+        {
+            skills.map((skill) => {
+                return (
+                    <li>
+                        <Pill text={skill} />
+                    </li>
+                );
+            })
+        }
+    </ul>
+</div>

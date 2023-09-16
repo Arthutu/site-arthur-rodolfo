@@ -1,0 +1,94 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ExperienceTile from "../components/ExperienceTile.astro";
+
+const experiences = [
+    {
+        role: "Software Engineer",
+        company: "Hubly",
+        companyUrl: "https://www.myhubly.com/",
+        from: "July 2022",
+        to: "Present",
+        skills: [
+            "React",
+            "Django",
+            "GraphQL",
+            "Python",
+            "JavaScript",
+            "AWS RDS",
+            "AWS Cognito",
+            "AWS Lambda",
+        ],
+    },
+    {
+        role: "Software Engineer",
+        company: "BTG Pactual",
+        companyUrl: "https://www.btgpactual.com/us/",
+        from: "Jan 2022",
+        to: "July 2022",
+        skills: [
+            "Angular",
+            ".NET",
+            "TypeScript",
+            "AWS SQS",
+            "AWS SNS",
+            "AWS Lambda",
+        ],
+    },
+    {
+        role: "Software Engineer",
+        company: "DTI Digital",
+        companyUrl: "https://www.dtidigital.com.br/en",
+        from: "July 2021",
+        to: "Jan 2022",
+        skills: ["React", "TypeScript", "PostgreSQL", "NestJS"],
+    },
+    {
+        role: "Software Engineer",
+        company: "Vallourec",
+        companyUrl: "https://www.vallourec.com/",
+        from: "Jan 2021",
+        to: "July 2021",
+        skills: ["C#", ".NET", "PostgreSQL"],
+    },
+    {
+        role: "Software Engineer Intern",
+        company: "Vallourec",
+        companyUrl: "https://www.vallourec.com/",
+        from: "Feb 2020",
+        to: "Jan 2021",
+        skills: ["C#", ".NET", "PostgreSQL"],
+    },
+];
+---
+
+<Layout
+    title="Experience | Arthur Rodolfo"
+    description="The personal site of Arthur Rodolfo">
+    <main class="p-6">
+        <section
+            id="experience"
+            aria-label="Work experience"
+            class="flex flex-col gap-6">
+            <ol class="flex flex-col gap-6">
+                {
+                    experiences.map((experience) => {
+                        return (
+                            <li>
+                                <ExperienceTile {...experience} />
+                            </li>
+                        );
+                    })
+                }
+            </ol>
+
+            <a
+                class="inline-flex gap-1 text-xs font-bold underline"
+                href="/resume.pdf"
+                target="_blank"
+                aria-label="Full Resume in PDF">
+                View Full Resume
+            </a>
+        </section>
+    </main>
+</Layout>
