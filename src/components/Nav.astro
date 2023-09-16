@@ -7,7 +7,7 @@ const navItems: Array<{ href: string; text: string }> = [
 ---
 
 <nav>
-    <ul class="max-xs:text-xs flex justify-center gap-2">
+    <ul class="flex justify-center gap-2 max-xs:text-xs">
         {
             navItems.map(({ href, text }) => {
                 return (
@@ -20,7 +20,9 @@ const navItems: Array<{ href: string; text: string }> = [
                                     ? [
                                           "border-b-2 border-indigo-200 dark:border-indigo-900",
                                       ]
-                                    : ["text-slate-500"],
+                                    : [
+                                          "text-slate-500 hover:border-b-2 hover:border-indigo-200 hover:dark:border-indigo-900",
+                                      ],
                             ]}>
                             {text}
                         </a>

@@ -1,7 +1,7 @@
 ---
 interface Props {
-    text: string;
     href: string;
+    text?: string;
     classes?: string;
 }
 
@@ -12,6 +12,6 @@ const { text, href, classes } = Astro.props;
     href={href}
     class:list={["inline-flex gap-1 font-bold hover:text-indigo-200", classes]}
     target="_blank">
-    {text}
+    {text && text}
     <slot />
 </a>
