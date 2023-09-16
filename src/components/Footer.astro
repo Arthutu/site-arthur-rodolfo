@@ -1,0 +1,27 @@
+---
+import { Icon } from "astro-icon";
+
+const currentYear = new Date().getFullYear();
+---
+
+<footer
+    class="mt-auto flex flex-col items-center gap-4 border-t-[1px] border-gray-300 p-6 text-xs dark:border-slate-700">
+    <p class="inline-flex gap-1">
+        Developed with
+        <a href="https://astro.build/" target="_blank">Astro</a>
+        <Icon class="w-3 dark:text-white" name="simple-icons:astro" /> and
+
+        <a href="https://tailwindcss.com/" target="_blank">Tailwind CSS</a>
+        <Icon class="w-3 dark:text-white" name="simple-icons:tailwindcss" />
+    </p>
+
+    <p class="inline-flex items-baseline gap-1">
+        Hosted on
+
+        <a href="https://vercel.com/" target="_blank">Vercel</a>
+
+        <Icon class="w-3 dark:text-white" name="simple-icons:vercel" />
+    </p>
+
+    <p>&copy; {currentYear} Arthur Rodolfo</p>
+</footer>
