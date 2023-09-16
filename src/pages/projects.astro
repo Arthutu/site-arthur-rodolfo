@@ -1,0 +1,36 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ProjectTile from "../components/ProjectTile.astro";
+
+const projects = [
+    {
+        name: "arthurrodolfo.com",
+        projectUrl: "https://github.com/Arthutu/site-arthur-rodolfo",
+        description: "Personal site built with Astro and Tailwind CSS",
+        skills: ["Astro", "Tailwind CSS", "Netlify"],
+    },
+];
+---
+
+<Layout
+    title="Projects | Arthur Rodolfo"
+    description="The personal site of Arthur Rodolfo">
+    <main class="p-6">
+        <section
+            id="projects"
+            aria-label="Arthur Rodolfo's Projects"
+            class="flex flex-col gap-6">
+            <ul class="flex flex-col gap-6">
+                {
+                    projects.map((project) => {
+                        return (
+                            <li>
+                                <ProjectTile {...project} />
+                            </li>
+                        );
+                    })
+                }
+            </ul>
+        </section>
+    </main>
+</Layout>
