@@ -1,0 +1,14 @@
+---
+import SocialMedia from "./SocialMedia.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+import Nav from "./Nav.astro";
+---
+
+<header class="item sticky top-0 bg-white dark:bg-indigo-950">
+    <div class="flex items-center justify-between p-6">
+        <SocialMedia />
+        <Nav />
+        <ThemeToggle />
+    </div>
+    <hr class="h-px border-0 bg-gray-300 dark:bg-slate-700" />
+</header>

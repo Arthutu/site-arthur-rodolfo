@@ -1,0 +1,32 @@
+---
+const navItems: Array<{ href: string; text: string }> = [
+    { href: "/", text: "About" },
+    { href: "/experience", text: "Experience" },
+    { href: "/projects", text: "Projects" },
+];
+---
+
+<nav>
+    <ul class="max-xs:text-xs flex justify-center gap-2">
+        {
+            navItems.map(({ href, text }) => {
+                return (
+                    <li>
+                        <a
+                            href={href}
+                            aria-current={Astro.url.pathname === href}
+                            class:list={[
+                                Astro.url.pathname === href
+                                    ? [
+                                          "border-b-2 border-indigo-200 dark:border-indigo-900",
+                                      ]
+                                    : ["text-slate-500"],
+                            ]}>
+                            {text}
+                        </a>
+                    </li>
+                );
+            })
+        }
+    </ul>
+</nav>
