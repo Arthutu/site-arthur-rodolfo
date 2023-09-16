@@ -1,14 +1,16 @@
 ---
 import { Icon } from "astro-icon";
+import Link from "./Link.astro";
 ---
 
 <div class="inline-flex justify-between gap-2">
-    <a href="https://github.com/Arthutu" target="_blank">
-        <Icon class="w-4" name="mdi:github" />
+    <Link href="https://github.com/Arthutu">
         <span class="sr-only">Github</span>
-    </a>
-    <a href="https://www.linkedin.com/in/arthur-rodolfo/" target="_blank">
-        <Icon class="w-4" name="mdi:linkedin" />
+        <Icon class="w-4 lg:w-6" name="mdi:github" />
+    </Link>
+
+    <Link href="https://www.linkedin.com/in/arthur-rodolfo/">
         <span class="sr-only">LinkedIn</span>
-    </a>
+        <Icon class="w-4 lg:w-6" name="mdi:linkedin" />
+    </Link>
 </div>
