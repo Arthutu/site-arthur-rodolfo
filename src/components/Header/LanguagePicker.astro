@@ -31,8 +31,7 @@ const lang = getLangFromUrl(Astro.url);
     select.addEventListener("change", (event) => {
         const newLang = (event.target as HTMLSelectElement).value;
 
-        const [_leadingSlash, _oldLang, ...rest] =
-            window.location.pathname.split("/");
+        const [, , ...rest] = window.location.pathname.split("/");
 
         const slug = rest.join("/");
 
