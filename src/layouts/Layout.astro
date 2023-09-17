@@ -30,7 +30,7 @@ const lang = getLangFromUrl(Astro.url);
     <body
         class="flex h-screen flex-col overflow-hidden bg-white text-black dark:bg-indigo-950 dark:text-white">
         <Header />
-        <main class="h-full overflow-y-scroll p-6">
+        <main class="h-full overflow-y-scroll p-6" tabindex="0">
             <slot />
         </main>
         <Footer />

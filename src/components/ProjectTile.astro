@@ -25,13 +25,13 @@ const { name, projectUrl, description } = Astro.props;
     </div>
 
     <div class="mt-6 flex flex-col flex-wrap">
-        <h2 class="text-sm font-semibold leading-6">
+        <h1 class="text-sm font-semibold leading-6">
             <Link href={projectUrl} text={name}>
                 <span class="absolute inset-0 rounded-3xl"></span>
 
                 <OpenInNewTabIcon />
             </Link>
-        </h2>
+        </h1>
 
         <p
             class="w-full flex-none break-words text-xs leading-6 text-slate-600 dark:text-slate-400">
