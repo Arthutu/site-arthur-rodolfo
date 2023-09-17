@@ -37,6 +37,8 @@ const lang = getLangFromUrl(Astro.url);
 
         const slug = rest.join("/");
 
-        window.location.pathname = `/${newLang}/${slug}`;
+        window.location.pathname = `/${newLang}${
+            slug.length === 0 ? "" : "/" + slug
+        }`;
     });
 </script>
