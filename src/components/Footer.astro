@@ -1,14 +1,17 @@
 ---
 import { Icon } from "astro-icon";
 import Link from "./Link.astro";
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
 
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 const currentYear = new Date().getFullYear();
 ---
 
 <footer
     class="mt-auto flex flex-col items-center gap-4 border-t-[1px] border-gray-300 p-6 text-xs text-slate-600 dark:border-slate-700 dark:text-slate-400 lg:flex-row lg:justify-between">
     <p class="inline-flex gap-1">
-        Developed with
+        {t("footer.developedWith")}{" "}
         <Link text="Astro" href="https://astro.build/">
             <Icon class="w-3" name="simple-icons:astro" />
         </Link>
@@ -22,7 +25,7 @@ const currentYear = new Date().getFullYear();
     <p>&copy; {currentYear} Arthur Rodolfo</p>
 
     <p class="ml-1">
-        Hosted on
+        {t("footer.hostedOn")}{" "}
         <Link
             text="Vercel"
             href="https://vercel.com/"

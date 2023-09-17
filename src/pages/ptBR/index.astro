@@ -1,0 +1,95 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { Icon } from "astro-icon";
+import { Image } from "astro:assets";
+import arthurPicture from "../../assets/arthur.jpg";
+---
+
+<Layout title="Arthur Rodolfo" description="Site pessoal de Arthur Rodolfo">
+    <section
+        class="mb-6 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-center">
+        <div class="flex flex-col gap-2">
+            <h1 class="text-center text-3xl font-bold lg:text-6xl">
+                <div class="inline-flex">
+                    <Icon
+                        class="animate-wave mr-4 w-6 lg:w-10"
+                        name="twemoji:waving-hand"
+                    /> E aí!
+                </div>
+                <br />
+                 Meu nome é Arthur Rodolfo
+            </h1>
+            <p
+                class="items-center text-center text-slate-600 dark:text-slate-400 lg:text-xl">
+                Sou um Engenheiro de Software do Brasil <Icon
+                    name="twemoji:flag-for-brazil"
+                    class="inline-block h-4 w-4"
+                /> que atualmente vive em Vancouver <Icon
+                    name="twemoji:flag-for-canada"
+                    class="inline-block h-4 w-4"
+                />
+            </p>
+        </div>
+
+        <Image
+            class:list="mx-auto aspect-auto h-1/2 w-1/2 rounded-2xl shadow-md shadow-indigo-200 dark:shadow-indigo-900 lg:mx-0 lg:h-1/4 lg:w-1/4"
+            src={arthurPicture}
+            alt="Foto de Arthur Rodolfo"
+        />
+    </section>
+
+    <section class="flex flex-col gap-6 text-justify">
+        <p>
+            Bem-vindo ao meu cantinho na internet! Estou absolutamente encantado
+            por você estar explorando meu site. Sou uma pessoa eclética,
+            misturando minha paixão profunda por games com meu fervor pela
+            programação, tudo enraizado em minha formação em Engenharia.
+
+            <p>
+                Os games fazem parte integrante da minha vida desde que me
+                lembro. Minha introdução ao mundo dos games veio por meio de meu
+                pai durante meus anos formativos, despertando uma fascinação
+                duradoura. Esteja eu derrotando dragões em reinos fantásticos,
+                competindo em competições de esports ou me imergindo nas mais
+                recentes experiências de realidade virtual, o mundo dos games
+                sempre foi uma fonte de emoção e exploração sem limites.
+            </p>
+
+            <p>
+                Minha jornada no mundo da tecnologia começou de forma inesperada
+                enquanto cursava a faculdade de Engenharia de Controle e
+                Automação. Embora inicialmente imaginasse um futuro trabalhando
+                com robôs e sistemas de automação intricados, uma epifania
+                notável ocorreu durante meus dias na universidade - me apaixonei
+                profundamente pela programação. A arte de criar software capaz
+                de orquestrar e automatizar sistemas complexos revelou um mundo
+                completamente novo de possibilidades.
+            </p>
+
+            <p>
+                Hoje, uso com orgulho o chapéu de Engenheiro de Software,
+                mesclando a precisão e o controle enraizados em minha formação
+                em engenharia com o engenho criativo que os games me
+                proporcionaram. Tive o privilégio de transformar ideias em sites
+                dinâmicos, aplicativos móveis e uma infinidade de outras
+                inovações digitais.
+            </p>
+
+            <p>
+                O que realmente alimenta minha paixão é a emoção da exploração.
+                O mundo da tecnologia é um vasto universo, repleto de
+                linguagens, estruturas e ferramentas diversas. Desfruto da
+                empolgação de adquirir novas habilidades e enfrentar projetos
+                desafiadores, seja no campo da aprendizagem automática,
+                desenvolvimento web ou cibersegurança.
+            </p>
+
+            <p>
+                Obrigado por visitar meu site, e espero que aproveite sua
+                jornada pelo meu reino digital! Não hesite em entrar em contato
+                para um bate-papo animado sobre tecnologia, jogos ou qualquer
+                coisa que desperte sua curiosidade.
+            </p>
+        </p>
+    </section>
+</Layout>

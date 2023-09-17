@@ -1,0 +1,42 @@
+---
+import Icon from "astro-icon";
+import { languages } from "../i18n/ui";
+import { getLangFromUrl } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+---
+
+<label>
+    <span class="sr-only">Language Selector</span>
+    <select
+        name="languages"
+        id="language-select"
+        class="rounded-lg border-2 border-indigo-200 p-0.5 text-xs dark:border-indigo-900 dark:bg-indigo-950 dark:text-white lg:p-1">
+        {
+            Object.entries(languages).map(([code, name]) => {
+                return (
+                    <option value={code} selected={lang === code}>
+                        {name}
+                    </option>
+                );
+            })
+        }
+    </select>
+</label>
+
+<script>
+    const select = document.querySelector(
+        "#language-select"
+    ) as HTMLSelectElement;
+
+    select.addEventListener("change", (event) => {
+        const newLang = (event.target as HTMLSelectElement).value;
+
+        const [_leadingSlash, _oldLang, ...rest] =
+            window.location.pathname.split("/");
+
+        const slug = rest.join("/");
+
+        window.location.pathname = `/${newLang}/${slug}`;
+    });
+</script>

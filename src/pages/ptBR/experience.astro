@@ -1,0 +1,109 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ExperienceTile from "../../components/ExperienceTile.astro";
+import ExperienceTileMobile from "../../components/ExperienceTileMobile.astro";
+import Link from "../../components/Link.astro";
+import OpenInNewTabIcon from "../../components/OpenInNewTabIcon.astro";
+
+const experiences = [
+    {
+        role: "Engenheiro de Software",
+        company: "Hubly",
+        companyUrl: "https://www.myhubly.com/",
+        description:
+            "Na minha primeira experiência internacional, estive ativamente envolvido em um projeto dinâmico que envolve React e Django. Ao longo desta jornada, contribuí com sucesso para a introdução de novos recursos cativantes, especialmente no domínio da lógica condicional e formulários dinâmicos, além da criação de uma biblioteca versátil de templates. Assumindo um papel de liderança, assumi as responsabilidades de conduzir revisões de código, orquestrar cerimônias essenciais do Scrum e promover uma colaboração eficaz com equipes multifuncionais, incluindo suporte ao produto e ao cliente. Além disso, minha ênfase também está em capacitar a equipe não apenas a cumprir essas responsabilidades de maneira eficaz, mas também a prosperar em sua execução.",
+        from: "Julho 2022",
+        to: "Presente",
+        skills: [
+            "React",
+            "Django",
+            "GraphQL",
+            "Python",
+            "JavaScript",
+            "AWS RDS",
+            "AWS Cognito",
+            "AWS Lambda",
+        ],
+    },
+    {
+        role: "Engenheiro de Software",
+        company: "BTG Pactual",
+        companyUrl: "https://www.btgpactual.com",
+        description:
+            "Fui o líder no desenvolvimento de uma ferramenta de software interna projetada para monitorar transações financeiras, desempenhando um papel de destaque em uma abrangente reformulação de UI/UX. Além disso, implementei com sucesso um sistema de rastreamento em tempo real integrado com o AWS SQS (Simple Queue Service) e AWS SNS (Simple Notification Service), aprimorando a eficiência e responsividade do nosso sistema. Minha experiência técnica se estendeu tanto para o front-end quanto para o back-end, pois utilizei com habilidade o Angular para proporcionar uma interface de usuário intuitiva e aproveitei o poder do .NET para oferecer suporte robusto ao back-end.",
+        from: "Jan 2022",
+        to: "Julho 2022",
+        skills: [
+            "Angular",
+            ".NET",
+            "TypeScript",
+            "AWS SQS",
+            "AWS SNS",
+            "AWS Lambda",
+        ],
+    },
+    {
+        role: "Engenheiro de Software",
+        company: "DTI Digital",
+        companyUrl: "https://www.dtidigital.com.br",
+        description:
+            "Contribuí ativamente para o desenvolvimento de um site de comércio eletrônico Whitelabel para a maior empresa de atacado do Brasil, assumindo uma função full-stack. Durante esse período, avancei para uma posição de liderança, onde assumi a responsabilidade pelas revisões de código da equipe de front-end e desempenhei um papel fundamental na supervisão das cerimônias do Scrum. No front-end, explorei o poder do React para criar interfaces de usuário dinâmicas e envolventes, enquanto no back-end, orquestrei o servidor com o NestJS, garantindo uma experiência perfeita de ponta a ponta para usuários e clientes.",
+        from: "Julho 2021",
+        to: "Jan 2022",
+        skills: ["React", "TypeScript", "PostgreSQL", "NestJS"],
+    },
+    {
+        role: "Engenheiro de Software",
+        company: "Vallourec",
+        companyUrl: "https://www.vallourec.com/pt-BR",
+        description:
+            "Como o único responsável por supervisionar um sistema crítico de rastreamento de site de produção, desempenhei um papel fundamental em sua manutenção e aprimoramento. Colaborando de perto com equipes da planta, contribuí ativamente para o design e implementação de novos recursos. Além disso, participei ativamente de rigorosos testes em grande escala, que envolveram o manuseio de milhares de tubos, fortalecendo ainda mais minhas habilidades. Construindo sobre o alicerce que estabeleci durante meu estágio, ampliei meu repertório técnico para incluir proficiência em sistemas .NET, Windows Forms e PostgreSQL, permitindo-me entregar soluções robustas e elevar o desempenho do sistema de rastreamento.",
+        from: "Jan 2021",
+        to: "Julho 2021",
+        skills: ["C#", ".NET", "PostgreSQL"],
+    },
+    {
+        role: "Estágio em Engenharia de Software",
+        company: "Vallourec",
+        companyUrl: "https://www.vallourec.com/pt-BR",
+        description:
+            "Adquiri uma valiosa experiência prática em software durante meu primeiro estágio, onde tive a oportunidade de colaborar em sistemas de rastreamento legados. Nessa capacidade, fui responsável pelo ciclo completo de desenvolvimento de software, abrangendo o desenvolvimento, manutenção e implantação bem-sucedida de código de produção usando C# e Windows Forms.",
+        from: "Fev 2020",
+        to: "Jan 2021",
+        skills: ["C#", ".NET", "PostgreSQL"],
+    },
+];
+---
+
+<Layout
+    title="Experiência | Arthur Rodolfo"
+    description="Site pessoal de Arthur Rodolfo">
+    <section id="experience" aria-label="Experiência profissional">
+        <ol class="group/list flex flex-col gap-6 lg:mx-auto lg:w-3/4">
+            {
+                experiences.map((experience, idx) => {
+                    return (
+                        <>
+                            <li class="lg:hidden">
+                                <ExperienceTileMobile {...experience} />
+                            </li>
+                            <li class="hidden lg:list-item">
+                                <ExperienceTile
+                                    {...experience}
+                                    showLine={idx < experiences.length - 1}
+                                />
+                            </li>
+                        </>
+                    );
+                })
+            }
+        </ol>
+
+        <Link
+            classes="text-xs mt-6 lg:mt-0 underline lg:float-right"
+            href="/resume.pdf"
+            text="Ver currículo completo">
+            <OpenInNewTabIcon />
+        </Link>
+    </section>
+</Layout>
