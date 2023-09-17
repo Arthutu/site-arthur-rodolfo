@@ -1,6 +1,9 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import ExperienceTile from "../components/ExperienceTile.astro";
+import ExperienceTileMobile from "../components/ExperienceTileMobile.astro";
+import Link from "../components/Link.astro";
+import OpenInNewTabIcon from "../components/OpenInNewTabIcon.astro";
 
 const experiences = [
     {
@@ -65,30 +68,32 @@ const experiences = [
 <Layout
     title="Experience | Arthur Rodolfo"
     description="The personal site of Arthur Rodolfo">
-    <main class="p-6">
-        <section
-            id="experience"
-            aria-label="Work experience"
-            class="flex flex-col gap-6">
-            <ol class="flex flex-col gap-6">
-                {
-                    experiences.map((experience) => {
-                        return (
-                            <li>
-                                <ExperienceTile {...experience} />
+    <section id="experience" aria-label="Work experience">
+        <ol class="group/list flex flex-col gap-6 lg:mx-auto lg:w-3/4">
+            {
+                experiences.map((experience, idx) => {
+                    return (
+                        <>
+                            <li class="lg:hidden">
+                                <ExperienceTileMobile {...experience} />
                             </li>
-                        );
-                    })
-                }
-            </ol>
+                            <li class="hidden lg:list-item">
+                                <ExperienceTile
+                                    {...experience}
+                                    showLine={idx < experiences.length - 1}
+                                />
+                            </li>
+                        </>
+                    );
+                })
+            }
+        </ol>
 
-            <a
-                class="inline-flex gap-1 text-xs font-bold underline"
-                href="/resume.pdf"
-                target="_blank"
-                aria-label="Full Resume in PDF">
-                View Full Resume
-            </a>
-        </section>
-    </main>
+        <Link
+            classes="text-xs mt-6 lg:mt-0 underline lg:float-right"
+            href="/resume.pdf"
+            text="View Full Resume">
+            <OpenInNewTabIcon />
+        </Link>
+    </section>
 </Layout>

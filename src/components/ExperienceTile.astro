@@ -1,4 +1,5 @@
 ---
+import Link from "./Link.astro";
 import OpenInNewTabIcon from "./OpenInNewTabIcon.astro";
 import Pill from "./Pill.astro";
 
@@ -9,50 +10,61 @@ interface Props {
     from: string;
     to: string;
     skills: string[];
+    showLine?: boolean;
 }
 
-const { role, company, companyUrl, from, to, skills } = Astro.props;
+const {
+    role,
+    company,
+    companyUrl,
+    from,
+    to,
+    skills,
+    showLine = true,
+} = Astro.props;
 ---
 
-<div class="flex flex-col gap-3">
-    <header>
-        <h2 class="flex text-sm font-bold">
-            {role}
-        </h2>
-        <h2 class="text-sm">
-            <a
-                class="flex gap-1"
-                href={companyUrl}
-                target="_blank"
-                aria-label=`${role} at ${company}`>
-                {company}
-                <OpenInNewTabIcon />
-            </a>
-        </h2>
-        <h6 class="text-xs text-slate-600 dark:text-slate-400">
+<div class="flex hover:!opacity-100 group-hover/list:opacity-50">
+    <header class="flex basis-1/5 flex-col items-center">
+        <h6 class="text-xs font-bold text-slate-600 dark:text-slate-400">
             {from} - {to}
         </h6>
+        {
+            showLine && (
+                <hr class="mt-4 h-full w-0.5 border-0 bg-indigo-200 dark:bg-indigo-900" />
+            )
+        }
     </header>
 
-    <p class="text-sm">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-        occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-        mollit anim id est laborum.
-    </p>
+    <div class="mb-3 basis-4/5">
+        <h2 class="mb-3 text-sm">
+            <span class="font-bold">{role}</span>
 
-    <ul class="flex flex-wrap gap-2">
-        {
-            skills.map((skill) => {
-                return (
-                    <li>
-                        <Pill text={skill} />
-                    </li>
-                );
-            })
-        }
-    </ul>
+            <Link classes="gap-1 w-fit" href={companyUrl} text={company}>
+                <OpenInNewTabIcon />
+            </Link>
+        </h2>
+
+        <p class="mb-3 break-words text-sm">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat. Duis aute irure dolor in
+            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+            culpa qui officia deserunt mollit anim id est laborum.
+        </p>
+
+        <ul class="flex flex-wrap gap-2">
+            {
+                skills.map((skill) => {
+                    return (
+                        <li>
+                            <Pill text={skill} />
+                        </li>
+                    );
+                })
+            }
+        </ul>
+    </div>
 </div>
