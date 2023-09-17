@@ -1,44 +1,58 @@
 ---
+import Link from "./Link.astro";
 import OpenInNewTabIcon from "./OpenInNewTabIcon.astro";
-import Pill from "./Pill.astro";
 
 interface Props {
     name: string;
     projectUrl: string;
     description: string;
-    skills: string[];
 }
 
-const { name, projectUrl, description, skills } = Astro.props;
+const { name, projectUrl, description } = Astro.props;
 ---
 
-<div class="flex flex-col gap-3">
-    <header class="flex flex-col gap-2">
-        <h2 class="flex text-sm font-bold">
-            <a
-                class="flex gap-1"
-                href={projectUrl}
-                target="_blank"
-                aria-label=`Project ${name} link`>
-                {name}
+<li
+    id="videoContainer"
+    class="relative rounded-3xl bg-indigo-50 p-6 hover:bg-indigo-100 hover:opacity-100 dark:bg-indigo-900/30 dark:hover:bg-indigo-900/50">
+    <div class="relative aspect-[672/324] transform overflow-hidden rounded-md">
+        <video
+            class="absolute inset-0 h-full w-full [mask-image:radial-gradient(white,black)]"
+            preload="none"
+            playsinline
+            poster="src/assets/arthur-site-cover.jpg">
+            <source src="src/assets/arthur-site.mp4" type="video/mp4" />
+        </video>
+    </div>
+
+    <div class="mt-6 flex flex-wrap items-center">
+        <h2 class="text-sm font-semibold leading-6">
+            <Link href={projectUrl} text={name}>
+                <span class="absolute inset-0 rounded-3xl"></span>
+
                 <OpenInNewTabIcon />
-            </a>
+            </Link>
         </h2>
 
-        <h6 class="text-xs text-slate-600 dark:text-slate-400">
+        <p
+            class="w-full flex-none text-xs leading-6 text-slate-600 dark:text-slate-400">
             {description}
-        </h6>
-    </header>
+        </p>
+    </div>
+</li>
 
-    <ul class="flex flex-wrap gap-2">
-        {
-            skills.map((skill) => {
-                return (
-                    <li>
-                        <Pill text={skill} />
-                    </li>
-                );
-            })
-        }
-    </ul>
-</div>
+<script>
+    const videoContainer = document.querySelector("#videoContainer");
+    const video = document.querySelector("video");
+
+    if (video && videoContainer) {
+        videoContainer.addEventListener("mouseenter", () => {
+            video.play();
+        });
+
+        videoContainer.addEventListener("mouseleave", () => {
+            video.pause();
+            video.currentTime = 0;
+            video.load();
+        });
+    }
+</script>

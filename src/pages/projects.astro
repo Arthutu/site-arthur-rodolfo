@@ -7,7 +7,6 @@ const projects = [
         name: "arthurrodolfo.com",
         projectUrl: "https://github.com/Arthutu/site-arthur-rodolfo",
         description: "Personal site built with Astro and Tailwind CSS",
-        skills: ["Astro", "Tailwind CSS", "Netlify"],
     },
 ];
 ---
@@ -15,22 +14,16 @@ const projects = [
 <Layout
     title="Projects | Arthur Rodolfo"
     description="The personal site of Arthur Rodolfo">
-    <main class="p-6">
-        <section
-            id="projects"
-            aria-label="Arthur Rodolfo's Projects"
-            class="flex flex-col gap-6">
-            <ul class="flex flex-col gap-6">
-                {
-                    projects.map((project) => {
-                        return (
-                            <li>
-                                <ProjectTile {...project} />
-                            </li>
-                        );
-                    })
-                }
-            </ul>
-        </section>
-    </main>
+    <section
+        class="h-full"
+        id="projects"
+        aria-label="Arthur Rodolfo's Projects">
+        <ul class="flex h-full w-full items-center justify-center">
+            {
+                projects.map((project) => {
+                    return <ProjectTile {...project} />;
+                })
+            }
+        </ul>
+    </section>
 </Layout>
