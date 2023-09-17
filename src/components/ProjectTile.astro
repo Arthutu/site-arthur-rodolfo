@@ -19,12 +19,12 @@ const { name, projectUrl, description } = Astro.props;
             class="absolute inset-0 h-full w-full [mask-image:radial-gradient(white,black)]"
             preload="none"
             playsinline
-            poster="src/assets/arthur-site-cover.jpg">
+            poster="src/assets/arthur-site-poster.jpg">
             <source src="src/assets/arthur-site.mp4" type="video/mp4" />
         </video>
     </div>
 
-    <div class="mt-6 flex flex-wrap items-center">
+    <div class="mt-6 flex flex-col flex-wrap">
         <h2 class="text-sm font-semibold leading-6">
             <Link href={projectUrl} text={name}>
                 <span class="absolute inset-0 rounded-3xl"></span>
@@ -34,7 +34,7 @@ const { name, projectUrl, description } = Astro.props;
         </h2>
 
         <p
-            class="w-full flex-none text-xs leading-6 text-slate-600 dark:text-slate-400">
+            class="w-full flex-none break-words text-xs leading-6 text-slate-600 dark:text-slate-400">
             {description}
         </p>
     </div>
