@@ -1,0 +1,109 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ExperienceTile from "../../components/ExperienceTile.astro";
+import ExperienceTileMobile from "../../components/ExperienceTileMobile.astro";
+import Link from "../../components/Link.astro";
+import OpenInNewTabIcon from "../../components/OpenInNewTabIcon.astro";
+
+const experiences = [
+    {
+        role: "Ingénieur logiciel",
+        company: "Hubly",
+        companyUrl: "https://www.myhubly.com/",
+        description:
+            "Dans ma première expérience internationale, j'ai été activement impliqué dans un projet dynamique impliquant React et Django. Tout au long de ce parcours, j'ai contribué avec succès à l'introduction de nouvelles fonctionnalités captivantes, notamment dans le domaine de la logique conditionnelle et des formulaires dynamiques, ainsi qu'à la création d'une bibliothèque de modèles de marché polyvalente. En assumant un rôle de leadership, j'ai pris en charge les responsabilités de la conduite des révisions de code, de l'orchestration des cérémonies scrum essentielles et de la promotion d'une collaboration harmonieuse avec des équipes pluridisciplinaires, y compris le support produit et le support client. De plus, mon attention se porte également sur l'autonomisation de l'équipe, non seulement pour remplir efficacement ces responsabilités, mais aussi pour s'épanouir dans leur exécution.",
+        from: "Juil 2022",
+        to: "Actuel",
+        skills: [
+            "React",
+            "Django",
+            "GraphQL",
+            "Python",
+            "JavaScript",
+            "AWS RDS",
+            "AWS Cognito",
+            "AWS Lambda",
+        ],
+    },
+    {
+        role: "Ingénieur logiciel",
+        company: "BTG Pactual",
+        companyUrl: "https://www.btgpactual.com/us/",
+        description:
+            "J'ai dirigé le développement d'un outil logiciel interne conçu pour surveiller les transactions financières, en assumant un rôle de premier plan dans une refonte complète de l'interface utilisateur (UI/UX). De plus, j'ai mis en place avec succès un système de traçabilité en temps réel intégré à AWS SQS (Simple Queue Service) et AWS SNS (Simple Notification Service), améliorant ainsi l'efficacité et la réactivité de notre système. Mes compétences techniques se sont étendues aussi bien au front-end qu'au back-end, alors que j'ai habilement utilisé Angular pour offrir une interface utilisateur intuitive et exploité la puissance de .NET pour un solide support en back-end.",
+        from: "Janv 2022",
+        to: "Juil 2022",
+        skills: [
+            "Angular",
+            ".NET",
+            "TypeScript",
+            "AWS SQS",
+            "AWS SNS",
+            "AWS Lambda",
+        ],
+    },
+    {
+        role: "Ingénieur logiciel",
+        company: "DTI Digital",
+        companyUrl: "https://www.dtidigital.com.br/en",
+        description:
+            "J'ai activement contribué au développement d'un site de commerce électronique Whitelabel pour la plus grande entreprise de vente en gros du Brésil, en assumant un rôle complet de développement. Au cours de cette période, j'ai évolué vers un poste de leadership où j'ai supervisé les révisions de code de l'équipe front-end et joué un rôle essentiel dans la gestion des cérémonies scrum. Sur le front-end, j'ai exploité la puissance de React pour créer des interfaces utilisateur dynamiques et attrayantes, tandis que sur le back-end, j'ai orchestré la magie côté serveur avec NestJS, garantissant une expérience fluide de bout en bout pour les utilisateurs et les clients.",
+        from: "Juil 2021",
+        to: "Janv 2022",
+        skills: ["React", "TypeScript", "PostgreSQL", "NestJS"],
+    },
+    {
+        role: "Ingénieur logiciel",
+        company: "Vallourec",
+        companyUrl: "https://www.vallourec.com",
+        description:
+            "En tant que seul individu responsable de la supervision d'un système critique de traçabilité sur site de production, j'ai joué un rôle clé dans sa maintenance et son amélioration. Collaborant étroitement avec les équipes sur site, j'ai activement contribué à la conception et à la mise en œuvre de fonctionnalités innovantes. De plus, j'ai participé activement à des tests à grande échelle rigoureux, impliquant la manipulation de milliers de tubes, renforçant ainsi davantage mes compétences. En capitalisant sur les bases que j'ai établies lors de mon stage, j'ai élargi mon répertoire technique pour inclure une expertise dans les systèmes .NET, Windows Forms et PostgreSQL, me permettant de livrer des solutions robustes et d'améliorer les performances du système de traçabilité.",
+        from: "Janv 2021",
+        to: "Juil 2021",
+        skills: ["C#", ".NET", "PostgreSQL"],
+    },
+    {
+        role: "Stagiaire en ingénierie logicielle",
+        company: "Vallourec",
+        companyUrl: "https://www.vallourec.com",
+        description:
+            "J'ai acquis une précieuse expérience pratique en développement de logiciels lors de mon premier poste, où j'ai eu l'opportunité de collaborer sur des systèmes de traçabilité hérités. Dans cette fonction, j'étais responsable du cycle complet de développement de logiciels, englobant le développement, la maintenance et le déploiement réussi de code de production en utilisant C# et Windows Forms.",
+        from: "Févr 2020",
+        to: "Janv 2021",
+        skills: ["C#", ".NET", "PostgreSQL"],
+    },
+];
+---
+
+<Layout
+    title="Expérience | Arthur Rodolfo"
+    description="Le site personnel d'Arthur Rodolfo">
+    <section id="experience" aria-label="Expérience professionnelle">
+        <ol class="group/list flex flex-col gap-6 lg:mx-auto lg:w-3/4">
+            {
+                experiences.map((experience, idx) => {
+                    return (
+                        <>
+                            <li class="lg:hidden">
+                                <ExperienceTileMobile {...experience} />
+                            </li>
+                            <li class="hidden lg:list-item">
+                                <ExperienceTile
+                                    {...experience}
+                                    showLine={idx < experiences.length - 1}
+                                />
+                            </li>
+                        </>
+                    );
+                })
+            }
+        </ol>
+
+        <Link
+            classes="text-xs mt-6 lg:mt-0 underline lg:float-right"
+            href="/resume.pdf"
+            text="Voir le CV complet">
+            <OpenInNewTabIcon />
+        </Link>
+    </section>
+</Layout>

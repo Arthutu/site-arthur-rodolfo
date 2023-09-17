@@ -1,6 +1,8 @@
 export const languages = {
     en: "English",
-    ptBR:  "Português (Brasil)"
+    ptBR:  "Português (Brasil)",
+    fr:  "Français",
+    es: "Español",
 };
 
 export const defaultLang = "en";
@@ -21,5 +23,21 @@ export const ui = {
         "footer.developedWith": "Desenvolvido com",
         "footer.hostedOn": "Hospedado em",
         "theme.dark": "Tema escuro",
+    },
+    fr: {
+        "nav.about": "À propos",
+        "nav.experience": "Expérience",
+        "nav.projects": "Projets",
+        "footer.developedWith": "Développé avec",
+        "footer.hostedOn": "Hébergé sur",
+        "theme.dark": "Thème sombre",
+    },
+    es: {
+        "nav.about": "Sobre",
+        "nav.experience": "Experiencia",
+        "nav.projects": "Proyectos",
+        "footer.developedWith": "Desarrollado con",
+        "footer.hostedOn": "Hospedado en",
+        "theme.dark": "Tema oscuro",
     },
 } as const;

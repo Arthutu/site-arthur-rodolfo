@@ -1,0 +1,27 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ProjectTile from "../../components/ProjectTile.astro";
+
+const projects = [
+    {
+        name: "arthurrodolfo.com",
+        projectUrl: "https://github.com/Arthutu/site-arthur-rodolfo",
+        description:
+            "Site personnel conçu avec la combinaison dynamique d'Astro et de Tailwind CSS.",
+    },
+];
+---
+
+<Layout
+    title="Projets | Arthur Rodolfo"
+    description="Le site personnel d'Arthur Rodolfo">
+    <section class="h-full" id="projects" aria-label="Projets d'Arthur Rodolfo">
+        <ul class="flex h-full w-full items-center justify-center">
+            {
+                projects.map((project) => {
+                    return <ProjectTile {...project} />;
+                })
+            }
+        </ul>
+    </section>
+</Layout>
