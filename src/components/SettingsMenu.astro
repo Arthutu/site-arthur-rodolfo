@@ -1,0 +1,46 @@
+---
+import Hamburger from "./Hamburger.astro";
+import LanguagePicker from "./LanguagePicker.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+---
+
+<menu-button class="h-6 lg:hidden">
+    <template>
+        <Hamburger />
+    </template>
+</menu-button>
+
+<div
+    id="menu-content"
+    class="absolute right-0 mr-3 mt-[6.5rem] flex-col justify-between gap-2 rounded-lg border-[1px] bg-white p-2 dark:border-slate-700 dark:bg-indigo-950 md:mr-6 lg:relative lg:m-0 lg:flex lg:flex-row lg:gap-4 lg:border-0">
+    <ThemeToggle />
+    <LanguagePicker />
+</div>
+
+<script>
+    class MenuButton extends HTMLElement {
+        constructor() {
+            super();
+
+            this.appendChild(
+                this.querySelector("template")!.content.cloneNode(true)
+            );
+            const button = this.querySelector("button")!;
+
+            const menu = document.getElementById("menu-content")!;
+
+            const setExpanded = (expand: boolean) => {
+                button.setAttribute("aria-expanded", expand ? "true" : "false");
+                menu.classList.add(expand ? "hidden" : "flex");
+                menu.classList.remove(expand ? "flex" : "hidden");
+            };
+
+            setExpanded(true);
+
+            button.addEventListener("click", () =>
+                setExpanded(menu.classList.contains("flex"))
+            );
+        }
+    }
+    customElements.define("menu-button", MenuButton);
+</script>
