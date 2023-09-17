@@ -26,12 +26,22 @@ const { title, description } = Astro.props;
         <title>{title}</title>
     </head>
     <body
-        class="flex h-screen flex-col bg-white text-black dark:bg-indigo-950 dark:text-white">
+        class="flex h-screen flex-col overflow-hidden bg-white text-black dark:bg-indigo-950 dark:text-white">
         <Header />
-        <slot />
+        <main class="h-full overflow-y-scroll p-6">
+            <slot />
+        </main>
         <Footer />
     </body>
 </html>
+
+<style is:global>
+    ::selection {
+        background-color: var(--highlight-background-color);
+        color: var(--highlight-color);
+    }
+</style>
+
 <script is:inline>
     const getThemePreference = () => {
         if (
@@ -49,10 +59,28 @@ const { title, description } = Astro.props;
     const isDark = getThemePreference() === "dark";
     document.documentElement.classList[isDark ? "add" : "remove"]("dark");
 
+    document.documentElement.style.setProperty(
+        "--highlight-color",
+        isDark ? "white" : "black"
+    );
+    document.documentElement.style.setProperty(
+        "--highlight-background-color",
+        isDark ? "rgb(49, 46, 129)" : "rgb(199, 210, 254)"
+    );
+
     if (typeof localStorage !== "undefined") {
         const observer = new MutationObserver(() => {
             const isDark = document.documentElement.classList.contains("dark");
             localStorage.setItem("theme", isDark ? "dark" : "light");
+
+            document.documentElement.style.setProperty(
+                "--highlight-color",
+                isDark ? "white" : "black"
+            );
+            document.documentElement.style.setProperty(
+                "--highlight-background-color",
+                isDark ? "rgb(49, 46, 129)" : "rgb(199, 210, 254)"
+            );
         });
 
         observer.observe(document.documentElement, {
