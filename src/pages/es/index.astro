@@ -1,6 +1,8 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { Icon } from "astro-icon";
+import { Image } from "astro:assets";
+import arthurPicture from "../../assets/arthur.jpg";
 ---
 
 <Layout
@@ -13,7 +15,7 @@ import { Icon } from "astro-icon";
             <h1 class="text-center text-3xl font-bold lg:text-6xl">
                 <div class="inline-flex">
                     <Icon
-                        class="animate-wave mr-4 w-6 lg:w-10"
+                        class="mr-4 w-6 animate-wave lg:w-10"
                         name="twemoji:waving-hand"
                     /> ¡Hola!
                 </div>
@@ -32,9 +34,9 @@ import { Icon } from "astro-icon";
             </h2>
         </div>
 
-        <img
-            class="mx-auto aspect-auto h-1/2 w-1/2 rounded-2xl shadow-md shadow-indigo-200 dark:shadow-indigo-900 lg:mx-0 lg:h-1/4 lg:w-1/4"
-            src="src/assets/arthur.jpg"
+        <Image
+            class:list="mx-auto aspect-auto h-1/2 w-1/2 rounded-2xl shadow-md shadow-indigo-200 dark:shadow-indigo-900 lg:mx-0 lg:h-1/4 lg:w-1/4"
+            src={arthurPicture}
             alt="Foto de Arthur Rodolfo"
         />
     </section>

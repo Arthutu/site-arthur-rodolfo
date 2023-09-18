@@ -2,6 +2,9 @@
 import Link from "./Link.astro";
 import OpenInNewTabIcon from "./OpenInNewTabIcon.astro";
 
+import arthurSitePoster from "../assets/arthur-site-poster.jpg";
+import arthurSiteVideo from "../assets/arthur-site.mp4";
+
 interface Props {
     name: string;
     projectUrl: string;
@@ -19,8 +22,8 @@ const { name, projectUrl, description } = Astro.props;
             class="absolute inset-0 h-full w-full [mask-image:radial-gradient(white,black)]"
             preload="none"
             playsinline
-            poster="../src/assets/arthur-site-poster.jpg">
-            <source src="../src/assets/arthur-site.mp4" type="video/mp4" />
+            poster={arthurSitePoster.src}>
+            <source src={arthurSiteVideo} type="video/mp4" />
         </video>
     </div>
 
