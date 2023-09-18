@@ -1,0 +1,23 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<Layout
+    title="Not Found | Arthur Rodolfo"
+    description="404 Error — this page was not found">
+    <div class="mx-auto flex h-full flex-col items-center justify-center gap-2">
+        <h1 class="text-3xl font-bold">{t("404.title")}</h1>
+        <p class="text-sm">
+            {t("404.description")}
+            {" "}
+            <span class="font-bold">
+                {Astro.url.pathname}
+            </span>.
+        </p>
+    </div>
+</Layout>
