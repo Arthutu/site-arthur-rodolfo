@@ -9,28 +9,31 @@ const currentYear = new Date().getFullYear();
 ---
 
 <footer
-    class="mt-auto flex flex-col items-center gap-4 border-t-[1px] border-gray-300 p-6 text-xs text-slate-600 dark:border-slate-700 dark:text-slate-400 lg:flex-row lg:justify-between">
-    <p class="inline-flex gap-1">
-        {t("footer.developedWith")}{" "}
-        <Link text="Astro" href="https://astro.build/">
-            <Icon class="w-3" name="simple-icons:astro" />
-        </Link>
+    class="mt-auto flex flex-col items-center gap-4 border-t-[1px] border-gray-300 p-4 text-xs text-slate-600 dark:border-slate-700 dark:text-slate-400 md:px-6 lg:flex-row lg:justify-between lg:px-6">
+    <div class="flex flex-col items-center lg:inline-flex lg:flex-row">
+        <p class="inline-flex gap-1 lg:mr-1">
+            {t("footer.developedWith")}
+            <Link text="Astro" href="https://astro.build/">
+                <Icon class="w-3" name="simple-icons:astro" />
+            </Link>
 
-         &
-        <Link text="Tailwind CSS" href="https://tailwindcss.com/">
-            <Icon class="w-3" name="simple-icons:tailwindcss" />
-        </Link>
-    </p>
+             &
+
+            <Link text="Tailwind CSS" href="https://tailwindcss.com/">
+                <Icon class="w-3" name="simple-icons:tailwindcss" />
+            </Link>
+        </p>
+
+        <p class="inline-flex gap-1">
+            {t("footer.hostedOn")}
+            <Link
+                text="Vercel"
+                href="https://vercel.com/"
+                classes="items-baseline inline-flex gap-1">
+                <Icon class="w-3" name="simple-icons:vercel" />
+            </Link>
+        </p>
+    </div>
 
     <p>&copy; {currentYear} Arthur Rodolfo</p>
-
-    <p class="ml-1">
-        {t("footer.hostedOn")}{" "}
-        <Link
-            text="Vercel"
-            href="https://vercel.com/"
-            classes="items-baseline inline-flex gap-1">
-            <Icon class="w-3" name="simple-icons:vercel" />
-        </Link>
-    </p>
 </footer>
