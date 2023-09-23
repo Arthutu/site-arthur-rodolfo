@@ -21,14 +21,38 @@ const lang = getLangFromUrl(Astro.url);
             property="og:description"
             content={description}
         />
+
+        <meta property="og:url" content="https://www.arthurrodolfo.com/" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Arthur Rodolfo" />
+        <meta
+            name="og:image"
+            content="https://www.arthurrodolfo.com/arthur.png"
+        />
+
+        <meta name="twitter:card" content="summary" />
+        <meta property="twitter:domain" content="arthurrodolfo.com" />
+        <meta property="twitter:url" content="https://www.arthurrodolfo.com/" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta
+            name="twitter:image"
+            content="https://www.arthurrodolfo.com/arthur.png"
+        />
+        <meta name="twitter:site" content="@arthurlrodolfo" />
+        <meta name="twitter:creator" content="@arthurlrodolfo" />
+
+        <meta name="generator" content={Astro.generator} />
         <meta name="viewport" content="width=device-width" />
+
+        <meta name="author" content="Arthur Rodolfo" />
+        <meta name="robots" content="index, follow" />
+
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
-        <meta name="generator" content={Astro.generator} />
         <title>{title}</title>
     </head>
-    <body
-        class="flex h-screen flex-col bg-white text-black dark:bg-indigo-950 dark:text-white">
+    <body class="bg-white text-black dark:bg-indigo-950 dark:text-white">
         <Header />
         <main class="p-6" tabindex="0">
             <slot />
