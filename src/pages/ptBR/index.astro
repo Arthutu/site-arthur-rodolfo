@@ -1,6 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { Icon } from "astro-icon";
+import { Icon } from "astro-icon/components";
 import { Image } from "astro:assets";
 import arthurPicture from "../../assets/arthur.jpg";
 ---
@@ -35,7 +35,8 @@ import arthurPicture from "../../assets/arthur.jpg";
         <Image
             class:list="mx-auto aspect-auto h-1/2 w-1/2 rounded-2xl shadow-md shadow-indigo-200 dark:shadow-indigo-900 lg:mx-0 lg:h-1/4 lg:w-1/4"
             src={arthurPicture}
-            alt="Foto de Arthur Rodolfo"
+            alt="Arthur Rodolfo"
+            loading="eager"
         />
     </section>
 

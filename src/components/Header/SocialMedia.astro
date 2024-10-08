@@ -1,15 +1,15 @@
 ---
-import { Icon } from "astro-icon";
+import { Icon } from "astro-icon/components";
 import Link from "../Link.astro";
 ---
 
 <div class="inline-flex justify-between gap-2">
-    <Link href="https://github.com/Arthutu">
+    <Link href="https://github.com/Arthutu" classes="text-md lg:text-2xl">
         <span class="sr-only">Github</span>
         <Icon class="w-4 lg:w-6" name="mdi:github" />
     </Link>
 
-    <Link href="https://www.linkedin.com/in/arthur-rodolfo/">
+    <Link href="https://www.linkedin.com/in/arthur-rodolfo/"  classes="text-md lg:text-2xl">
         <span class="sr-only">LinkedIn</span>
         <Icon class="w-4 lg:w-6" name="mdi:linkedin" />
     </Link>
