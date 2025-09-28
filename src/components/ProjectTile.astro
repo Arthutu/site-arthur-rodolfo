@@ -17,9 +17,9 @@ const { name, projectUrl, description } = Astro.props;
 <li
     id="videoContainer"
     class="relative rounded-3xl bg-indigo-50 p-6 hover:bg-indigo-100 hover:opacity-100 dark:bg-indigo-900/30 dark:hover:bg-indigo-900/50">
-    <div class="relative aspect-[672/324] transform overflow-hidden rounded-md">
+    <div class="relative aspect-672/324 transform overflow-hidden rounded-md">
         <video
-            class="absolute inset-0 h-full w-full [mask-image:radial-gradient(white,black)]"
+            class="absolute inset-0 h-full w-full mask-[radial-gradient(white,black)]"
             preload="none"
             playsinline
             poster={arthurSitePoster.src}>
