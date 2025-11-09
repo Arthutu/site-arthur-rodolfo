@@ -1,0 +1,4 @@
+name = "arthur-rodolfo"
+compatibility_date = "2024-11-08"
+
+pages_build_output_dir = "dist"
