@@ -5,96 +5,44 @@ import { Image } from "astro:assets";
 import arthurPicture from "../../assets/arthur.jpg";
 ---
 
-<Layout title="Arthur Rodolfo" description="Le site personnel d'Arthur Rodolfo">
+<Layout
+    title="Arthur Rodolfo"
+    description="Ingénieur logiciel basé à Vancouver, construisant des produits avec soin et précision">
     <section
-        class="mb-6 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-center"
+        class="mx-auto max-w-3xl flex flex-col gap-8 lg:gap-12"
         aria-label="Présentation d'Arthur Rodolfo">
-        <div class="flex flex-col gap-2">
-            <h1 class="text-center text-3xl font-bold lg:text-6xl">
-                <div class="inline-flex">
-                    <Icon
-                        class="animate-wave mr-4 w-6 lg:w-10"
-                        name="twemoji:waving-hand"
-                    /> Salut!
+        <div class="flex flex-col lg:flex-row items-center lg:items-start gap-8">
+            <Image
+                class="w-32 h-32 lg:w-40 lg:h-40 rounded-full object-cover shadow-lg"
+                src={arthurPicture}
+                alt="Arthur Rodolfo"
+                loading="eager"
+            />
+
+            <div class="flex-1 flex flex-col gap-4">
+                <div>
+                    <h1 class="text-4xl lg:text-5xl font-bold mb-2">
+                        Arthur Rodolfo
+                    </h1>
+                    <p class="text-xl lg:text-2xl text-slate-600 dark:text-slate-400">
+                        Ingénieur Logiciel
+                    </p>
                 </div>
-                <br />
-                 Je m'appelle Arthur Rodolfo
-            </h1>
-            <h2
-                class="items-center text-center text-slate-600 dark:text-slate-400 lg:text-xl">
-                Je suis ingénieur logiciel originaire du Brésil <Icon
-                    name="twemoji:flag-for-brazil"
-                    class="inline-block h-4 w-4"
-                /> et actuellement basé à Vancouver <Icon
-                    name="twemoji:flag-for-canada"
-                    class="inline-block h-4 w-4"
-                />
-            </h2>
+
+                <p class="text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
+                    Salut! Je suis un ingénieur logiciel du Brésil <Icon
+                        name="twemoji:flag-for-brazil"
+                        class="inline-block h-5 w-5"
+                    /> actuellement basé à Vancouver <Icon
+                        name="twemoji:flag-for-canada"
+                        class="inline-block h-5 w-5"
+                    />. Je construis des applications web avec un accent sur le code propre et les excellentes expériences utilisateur.
+                </p>
+
+                <p class="text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
+                    Actuellement, je travaille chez <a href="https://www.clio.com/" target="_blank" rel="noopener noreferrer" class="font-medium underline decoration-2 underline-offset-2 hover:text-slate-900 dark:hover:text-white transition-colors">Clio</a> dans l'équipe Platform, aidant à intégrer les produits dans une plateforme unifiée. Auparavant, j'ai travaillé avec des entreprises comme Hubly, BTG Pactual et d'autres, construisant tout, des systèmes e-commerce aux outils de surveillance financière.
+                </p>
+            </div>
         </div>
-
-        <Image
-            class:list="mx-auto aspect-auto h-1/2 w-1/2 rounded-2xl shadow-md shadow-indigo-200 dark:shadow-indigo-900 lg:mx-0 lg:h-1/4 lg:w-1/4"
-            src={arthurPicture}
-            alt="Arthur Rodolfo"
-            loading="eager"
-        />
-    </section>
-
-    <section class="flex flex-col gap-6 text-justify">
-        <p>
-            Bienvenue dans mon coin de l'internet ! Je suis absolument ravi que
-            vous exploriez mon site web. Je suis un être éclectique, mêlant ma
-            passion profonde pour les jeux vidéo à mon engouement pour la
-            programmation, le tout enraciné dans ma formation en ingénierie.
-
-            <p>
-                Les jeux vidéo font partie intégrante de ma vie depuis aussi
-                longtemps que je m'en souvienne. Mon initiation au monde du jeu
-                vidéo s'est faite grâce à mon père pendant mes années
-                formatives, suscitant une fascination durable. Que je combatte
-                des dragons dans des royaumes fantastiques, que je participe à
-                des compétitions d'esport ou que je me plonge dans les dernières
-                expériences de réalité virtuelle, le monde des jeux vidéo a
-                toujours été une source d'excitation et d'exploration sans
-                limites.
-            </p>
-
-            <p>
-                Mon voyage dans le monde de la technologie a commencé de manière
-                inattendue pendant que je poursuivais mes études en ingénierie
-                de contrôle et d'automatisation. Bien que j'aie initialement
-                imaginé un avenir travaillant avec des robots et des systèmes
-                d'automatisation complexes, une révélation remarquable s'est
-                produite pendant mes années à l'université : je suis tombé
-                amoureux de la programmation. L'art de créer des logiciels
-                capables d'orchestrer et d'automatiser des systèmes complexes a
-                ouvert un tout nouveau monde de possibilités.
-            </p>
-
-            <p>
-                Aujourd'hui, je porte fièrement le chapeau d'ingénieur logiciel,
-                mêlant la précision et le contrôle ancrés dans ma formation en
-                ingénierie au génie créatif que les jeux vidéo m'ont apporté.
-                J'ai eu le privilège de transformer des idées en sites web
-                dynamiques, en applications mobiles et en une multitude d'autres
-                innovations numériques
-            </p>
-
-            <p>
-                Ce qui alimente vraiment ma passion, c'est l'excitation de
-                l'exploration. Le monde de la technologie est un vaste univers,
-                regorgeant de langages, de cadres et d'outils divers. J'apprécie
-                l'excitation d'acquérir de nouvelles compétences et de relever
-                des défis, que ce soit dans les domaines de l'apprentissage
-                automatique, du développement web ou de la cybersécurité.
-            </p>
-
-            <p>
-                Merci d'avoir visité mon site web, j'espère que vous apprécierez
-                votre voyage dans mon royaume numérique ! N'hésitez pas à me
-                contacter pour une discussion animée sur la technologie, les
-                jeux vidéo ou tout ce qui éveille votre curiosité.
-            </p>
-        </p>
     </section>
 </Layout>

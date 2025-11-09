@@ -54,9 +54,9 @@ const lang = getLangFromUrl(Astro.url);
         <title>{title}</title>
     </head>
     <body
-        class="flex h-screen flex-col bg-white text-black dark:bg-indigo-950 dark:text-white">
+        class="flex min-h-screen flex-col bg-neutral-50 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-50 transition-colors">
         <Header />
-        <main class="p-6">
+        <main class="flex-1 p-6 lg:p-12">
             <slot />
         </main>
         <Footer />
@@ -89,11 +89,11 @@ const lang = getLangFromUrl(Astro.url);
 
     document.documentElement.style.setProperty(
         "--highlight-color",
-        isDark ? "white" : "black"
+        isDark ? "rgb(10, 10, 10)" : "rgb(250, 250, 250)"
     );
     document.documentElement.style.setProperty(
         "--highlight-background-color",
-        isDark ? "rgb(49, 46, 129)" : "rgb(199, 210, 254)"
+        isDark ? "rgb(245, 245, 245)" : "rgb(38, 38, 38)"
     );
 
     if (typeof localStorage !== "undefined") {
@@ -103,11 +103,11 @@ const lang = getLangFromUrl(Astro.url);
 
             document.documentElement.style.setProperty(
                 "--highlight-color",
-                isDark ? "white" : "black"
+                isDark ? "rgb(10, 10, 10)" : "rgb(250, 250, 250)"
             );
             document.documentElement.style.setProperty(
                 "--highlight-background-color",
-                isDark ? "rgb(49, 46, 129)" : "rgb(199, 210, 254)"
+                isDark ? "rgb(245, 245, 245)" : "rgb(38, 38, 38)"
             );
         });
 
