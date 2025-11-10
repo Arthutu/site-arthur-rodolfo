@@ -8,10 +8,9 @@ export default defineConfig({
   integrations: [icon()],
   output: "static",
   adapter: cloudflare({
-    imageService: "compile"
+    imageService: "cloudflare"
   }),
   trailingSlash: "never",
-
   vite: {
     plugins: [tailwindcss()]
   }
