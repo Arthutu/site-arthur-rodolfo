@@ -1,3 +1,16 @@
 ---
-return Astro.redirect("/en");
+// Redirect handled by Cloudflare _redirects file
+// This page should not be rendered in production
 ---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="refresh" content="0;url=/en" />
+        <script>
+            window.location.replace("/en");
+        </script>
+        <title>Redirecting...</title>
+    </head>
+</html>
