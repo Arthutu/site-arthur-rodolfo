@@ -8,7 +8,7 @@ export default defineConfig({
   integrations: [icon()],
   output: "static",
   adapter: cloudflare({
-    imageService: "cloudflare"
+    imageService: "compile"
   }),
   trailingSlash: "never",
   vite: {
