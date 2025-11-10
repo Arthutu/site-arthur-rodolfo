@@ -5,6 +5,7 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
 const navItems: Array<{ href: string; text: string }> = [
+    { href: `/${lang}`, text: t("nav.home") },
     { href: `/${lang}/about`, text: t("nav.about") },
     {
         href: `/${lang}/experience`,

@@ -9,6 +9,7 @@ export const defaultLang = "en";
 
 export const ui = {
     en: {
+        "nav.home": "Home",
         "nav.about": "About",
         "nav.experience": "Experience",
         "nav.projects": "Projects",
@@ -19,6 +20,7 @@ export const ui = {
         "404.description": "Ops, we could not find",
     },
     ptBR: {
+        "nav.home": "Início",
         "nav.about": "Sobre",
         "nav.experience": "Experiência",
         "nav.projects": "Projetos",
@@ -29,6 +31,7 @@ export const ui = {
         "404.description": "Ops, não conseguimos encontrar",
     },
     fr: {
+        "nav.home": "Accueil",
         "nav.about": "À propos",
         "nav.experience": "Expérience",
         "nav.projects": "Projets",
@@ -39,6 +42,7 @@ export const ui = {
         "404.description": "Ops, nous n'avons pas pu trouver",
     },
     es: {
+        "nav.home": "Inicio",
         "nav.about": "Sobre",
         "nav.experience": "Experiencia",
         "nav.projects": "Proyectos",
