@@ -10,7 +10,7 @@ const lang = getLangFromUrl(Astro.url);
     <select
         name="languages"
         id="language-select"
-        class="rounded-lg border-2 border-indigo-200 p-0.5 text-xs dark:border-indigo-900 dark:bg-indigo-950 dark:text-white lg:p-1">
+        class="rounded-lg border-2 border-indigo-200 p-0.5 text-xs lg:p-1 dark:border-neutral-800 dark:bg-neutral-950 dark:text-white">
         {
             Object.entries(languages).map(([code, name]) => {
                 return (
