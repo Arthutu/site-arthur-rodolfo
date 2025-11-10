@@ -5,7 +5,8 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
 const navItems: Array<{ href: string; text: string }> = [
-    { href: `/${lang}`, text: t("nav.about") },
+    { href: `/${lang}`, text: t("nav.home") },
+    { href: `/${lang}/about`, text: t("nav.about") },
     {
         href: `/${lang}/experience`,
         text: t("nav.experience"),
@@ -29,10 +30,10 @@ const navItems: Array<{ href: string; text: string }> = [
                             class:list={[
                                 Astro.url.pathname === href
                                     ? [
-                                          "border-b-2 border-indigo-200 dark:border-indigo-900",
+                                          "border-b-2 border-neutral-900 dark:border-neutral-100",
                                       ]
                                     : [
-                                          "text-slate-500 hover:border-b-2 hover:border-indigo-200 dark:text-slate-400 hover:dark:border-indigo-900",
+                                          "text-neutral-600 hover:border-b-2 hover:border-neutral-400 dark:text-neutral-400 hover:dark:border-neutral-600 transition-colors",
                                       ],
                             ]}>
                             {text}

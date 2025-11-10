@@ -1,22 +1,16 @@
 import { defineConfig } from "astro/config";
 import icon from "astro-icon";
-
-import vercel from "@astrojs/vercel";
-
+import cloudflare from "@astrojs/cloudflare";
 import tailwindcss from "@tailwindcss/vite";
 
 // https://astro.build/config
 export default defineConfig({
   integrations: [icon()],
-  output: "server",
-
-  adapter: vercel({
-      webAnalytics: { enabled: true },
-      speedInsights: { enabled: true },
+  output: "static",
+  adapter: cloudflare({
+    imageService: "compile"
   }),
-
   trailingSlash: "never",
-
   vite: {
     plugins: [tailwindcss()]
   }

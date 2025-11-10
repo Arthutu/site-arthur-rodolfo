@@ -1,0 +1,5 @@
+# https://developers.cloudflare.com/workers/wrangler/configuration/
+
+name = "site-arthur-rodolfo"
+compatibility_date = "2025-11-08"
+pages_build_output_dir = "./dist"

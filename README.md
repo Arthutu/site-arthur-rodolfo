@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This project was built using Astro and Tailwind CSS. It is hosted on Vercel.
+This project was built using Astro and Tailwind CSS. It is hosted on Cloudflare pages.
 
 This README will provide you with essential information about the project structure and how to set up your development environment.
 
