@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#0a0a09"/>
+  <g stroke="#f0eee8" stroke-opacity="0.13">
+    <path d="M0 157.5h1200M0 315h1200M0 472.5h1200"/>
+    <path d="M300 0v630M600 0v630M900 0v630"/>
+  </g>
+  <circle cx="70" cy="70" r="28" fill="none" stroke="#f0eee8" stroke-opacity="0.5"/>
+  <text x="70" y="76" fill="#f0eee8" font-family="Arial" font-size="18" font-weight="700" text-anchor="middle">AR</text>
+  <text x="1130" y="76" fill="#f0eee8" font-family="Arial" font-size="15" letter-spacing="3" text-anchor="end">PRODUCT ENGINEER · VANCOUVER</text>
+  <text x="52" y="327" fill="#f0eee8" font-family="Arial" font-size="176" font-weight="700" letter-spacing="-13">ARTHUR</text>
+  <text x="355" y="475" fill="#f0eee8" font-family="Arial" font-size="176" font-weight="700" letter-spacing="-13">RODOLFO</text>
+  <rect x="52" y="550" width="12" height="12" fill="#d2ff3f"/>
+  <text x="82" y="562" fill="#f0eee8" font-family="Arial" font-size="20" letter-spacing="1">TURNING AMBIGUOUS IDEAS INTO RELIABLE SOFTWARE.</text>
+</svg>

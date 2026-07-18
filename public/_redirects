@@ -1,3 +1,7 @@
 # Cloudflare Pages redirects
 # Redirect root to /en
 /  /en  301
+/en/projects  /en  301
+/ptBR/projects  /ptBR  301
+/fr/projects  /fr  301
+/es/projects  /es  301

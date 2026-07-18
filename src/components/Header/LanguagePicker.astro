@@ -1,16 +1,18 @@
 ---
 import { languages } from "../../i18n/ui";
 import { getLangFromUrl } from "../../i18n/utils";
+import { useTranslations } from "../../i18n/utils";
 
 const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
 <label class="language-picker">
-    <span class="sr-only">Language</span>
+    <span class="sr-only">{t("nav.language")}</span>
     <select
         name="languages"
         id="language-select"
-        aria-label="Language">
+        aria-label={t("nav.language")}>
         {
             Object.entries(languages).map(([code, name]) => {
                 return (

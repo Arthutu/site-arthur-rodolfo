@@ -16,7 +16,6 @@
 }
 
 html {
-    min-width: 20rem;
     background: #0a0a09;
     scroll-behavior: smooth;
     scrollbar-color: #76766e #0a0a09;

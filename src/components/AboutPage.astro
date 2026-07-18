@@ -1,0 +1,381 @@
+---
+import { Image } from "astro:assets";
+import EditorialContact from "./EditorialContact.astro";
+import CinematicPageHero from "./CinematicPageHero.astro";
+import aboutHero from "../assets/arthur-about-hero.png";
+import lifestyleDetail from "../assets/arthur-lifestyle-detail.png";
+
+type Language = "en" | "ptBR" | "fr" | "es";
+
+interface Props {
+    lang: Language;
+}
+
+const { lang } = Astro.props;
+
+const copy = {
+    en: {
+        page: "About",
+        hero: "Engineer by craft. Builder by instinct.",
+        intro: "I’m Arthur, a product-minded software engineer based in Vancouver. I turn unclear problems into useful, reliable software—and help the people around me make better decisions along the way.",
+        nowLabel: "01 / Today",
+        nowTitle: "I work across boundaries.",
+        nowBody: "My best work lives between product, design, and engineering. I care about understanding the real problem, choosing the right trade-offs, and carrying the details from the first conversation through production.",
+        originLabel: "02 / Origin",
+        originLead: "Brazil shaped my drive.",
+        originBody: "I started in Control and Automation Engineering, expecting a career around industrial systems. Programming changed that direction. An internship building production traceability software became the beginning of a path through manufacturing, consulting, fintech, startups, and product platforms—eventually bringing me to Canada.",
+        practiceLabel: "03 / Practice",
+        practiceTitle: "How I approach the work.",
+        practices: [
+            ["Clarity", "Make the problem understandable before making the solution sophisticated."],
+            ["Ownership", "Stay with the work from ambiguity through launch, learning, and iteration."],
+            ["Craft", "Treat reliability, maintainability, and experience as parts of the same product."],
+            ["Leverage", "Use AI and modern tools to move faster without outsourcing judgment."],
+        ],
+        humanLabel: "04 / Beyond work",
+        humanTitle: "Always learning. Always improving.",
+        humanBody: "Gaming taught me to understand systems, adapt after failure, and keep refining the strategy. Training reinforces the same lesson: progress compounds when discipline becomes routine. Those ideas shape how I build, collaborate, and grow.",
+        lifestyleAlt: "Arthur Rodolfo writing in a notebook at a Vancouver café",
+    },
+    ptBR: {
+        page: "Sobre",
+        hero: "Engenheiro por ofício. Builder por instinto.",
+        intro: "Sou Arthur, engenheiro de software com visão de produto baseado em Vancouver. Transformo problemas pouco claros em software útil e confiável—e ajudo as pessoas ao meu redor a tomar decisões melhores ao longo do caminho.",
+        nowLabel: "01 / Hoje",
+        nowTitle: "Trabalho entre fronteiras.",
+        nowBody: "Meu melhor trabalho vive entre produto, design e engenharia. Busco entender o problema real, escolher os trade-offs certos e cuidar dos detalhes desde a primeira conversa até a produção.",
+        originLabel: "02 / Origem",
+        originLead: "O Brasil formou minha determinação.",
+        originBody: "Comecei em Engenharia de Controle e Automação, imaginando uma carreira em sistemas industriais. A programação mudou essa direção. Um estágio construindo software de rastreabilidade de produção iniciou uma trajetória por indústria, consultoria, fintech, startups e plataformas de produto—até me trazer ao Canadá.",
+        practiceLabel: "03 / Prática",
+        practiceTitle: "Como eu abordo o trabalho.",
+        practices: [
+            ["Clareza", "Tornar o problema compreensível antes de tornar a solução sofisticada."],
+            ["Ownership", "Acompanhar o trabalho da ambiguidade ao lançamento, aprendizado e iteração."],
+            ["Craft", "Tratar confiabilidade, manutenção e experiência como partes do mesmo produto."],
+            ["Alavancagem", "Usar IA e ferramentas modernas para acelerar sem terceirizar o julgamento."],
+        ],
+        humanLabel: "04 / Além do trabalho",
+        humanTitle: "Sempre aprendendo. Sempre melhorando.",
+        humanBody: "Os games me ensinaram a entender sistemas, me adaptar depois de falhar e continuar refinando a estratégia. O treino reforça a mesma lição: o progresso se acumula quando a disciplina vira rotina. Essas ideias moldam como construo, colaboro e cresço.",
+        lifestyleAlt: "Arthur Rodolfo escrevendo em um caderno em um café de Vancouver",
+    },
+    fr: {
+        page: "À propos",
+        hero: "Ingénieur par métier. Builder par instinct.",
+        intro: "Je suis Arthur, ingénieur logiciel orienté produit basé à Vancouver. Je transforme des problèmes flous en logiciels utiles et fiables—tout en aidant les personnes autour de moi à prendre de meilleures décisions.",
+        nowLabel: "01 / Aujourd’hui",
+        nowTitle: "Je travaille au-delà des frontières.",
+        nowBody: "Mon meilleur travail se situe entre produit, design et ingénierie. Je cherche à comprendre le vrai problème, choisir les bons compromis et porter les détails de la première conversation jusqu’à la production.",
+        originLabel: "02 / Origine",
+        originLead: "Le Brésil a forgé ma détermination.",
+        originBody: "J’ai commencé en ingénierie de contrôle et d’automatisation, en imaginant une carrière dans les systèmes industriels. La programmation a changé cette direction. Un stage sur un logiciel de traçabilité de production a lancé un parcours entre industrie, conseil, fintech, startups et plateformes produit—jusqu’au Canada.",
+        practiceLabel: "03 / Pratique",
+        practiceTitle: "Ma façon d’aborder le travail.",
+        practices: [
+            ["Clarté", "Rendre le problème compréhensible avant de rendre la solution sophistiquée."],
+            ["Responsabilité", "Suivre le travail de l’ambiguïté au lancement, à l’apprentissage et à l’itération."],
+            ["Savoir-faire", "Traiter fiabilité, maintenabilité et expérience comme un même produit."],
+            ["Levier", "Utiliser l’IA et les outils modernes pour accélérer sans déléguer le jugement."],
+        ],
+        humanLabel: "04 / Au-delà du travail",
+        humanTitle: "Toujours apprendre. Toujours progresser.",
+        humanBody: "Le jeu vidéo m’a appris à comprendre les systèmes, à m’adapter après l’échec et à affiner la stratégie. L’entraînement renforce la même leçon : le progrès s’accumule lorsque la discipline devient une routine. Ces idées façonnent ma manière de construire, collaborer et grandir.",
+        lifestyleAlt: "Arthur Rodolfo écrivant dans un carnet dans un café de Vancouver",
+    },
+    es: {
+        page: "Sobre mí",
+        hero: "Ingeniero por oficio. Builder por instinto.",
+        intro: "Soy Arthur, ingeniero de software orientado a producto y radicado en Vancouver. Convierto problemas poco claros en software útil y confiable—y ayudo a quienes me rodean a tomar mejores decisiones durante el proceso.",
+        nowLabel: "01 / Hoy",
+        nowTitle: "Trabajo entre fronteras.",
+        nowBody: "Mi mejor trabajo vive entre producto, diseño e ingeniería. Me importa entender el problema real, elegir los trade-offs correctos y cuidar los detalles desde la primera conversación hasta producción.",
+        originLabel: "02 / Origen",
+        originLead: "Brasil formó mi determinación.",
+        originBody: "Empecé en Ingeniería de Control y Automatización, imaginando una carrera en sistemas industriales. La programación cambió esa dirección. Una pasantía construyendo software de trazabilidad inició un recorrido por industria, consultoría, fintech, startups y plataformas de producto—hasta llevarme a Canadá.",
+        practiceLabel: "03 / Práctica",
+        practiceTitle: "Cómo abordo el trabajo.",
+        practices: [
+            ["Claridad", "Hacer comprensible el problema antes de sofisticar la solución."],
+            ["Responsabilidad", "Acompañar el trabajo desde la ambigüedad hasta el lanzamiento, aprendizaje e iteración."],
+            ["Oficio", "Tratar confiabilidad, mantenibilidad y experiencia como partes del mismo producto."],
+            ["Apalancamiento", "Usar IA y herramientas modernas para avanzar sin delegar el criterio."],
+        ],
+        humanLabel: "04 / Más allá del trabajo",
+        humanTitle: "Siempre aprendiendo. Siempre mejorando.",
+        humanBody: "Los videojuegos me enseñaron a entender sistemas, adaptarme después de fallar y seguir refinando la estrategia. El entrenamiento refuerza la misma lección: el progreso se acumula cuando la disciplina se vuelve rutina. Esas ideas moldean cómo construyo, colaboro y crezco.",
+        lifestyleAlt: "Arthur Rodolfo escribiendo en un cuaderno en una cafetería de Vancouver",
+    },
+} as const;
+
+const c = copy[lang];
+const enterLabels = { en: "Enter", ptBR: "Entrar", fr: "Entrer", es: "Entrar" } as const;
+---
+
+<div class="about-page-shell" data-inner-page>
+    <CinematicPageHero page={c.page} statement={c.hero} intro={c.intro} enterLabel={enterLabels[lang]} image={aboutHero} imagePosition="44% 42%" />
+
+    <main id="main-content" class="about-page">
+    <section class="about-now" aria-labelledby="about-now-title" data-header-theme="light" data-reveal>
+        <div class="page-label"><span>{c.nowLabel}</span><span aria-hidden="true">AR / 02</span></div>
+        <h2 id="about-now-title">{c.nowTitle}</h2>
+        <p>{c.nowBody}</p>
+    </section>
+
+    <section class="about-origin" aria-labelledby="about-origin-title" data-header-theme="dark" data-reveal>
+        <div class="page-label"><span>{c.originLabel}</span><span aria-hidden="true">AR / 03</span></div>
+        <h2 id="about-origin-title">{c.originLead}</h2>
+        <p>{c.originBody}</p>
+    </section>
+
+    <section class="about-practice" aria-labelledby="about-practice-title" data-header-theme="dark" data-reveal>
+        <div class="page-label"><span>{c.practiceLabel}</span><span aria-hidden="true">AR / 04</span></div>
+        <h2 id="about-practice-title">{c.practiceTitle}</h2>
+        <ol>
+            {c.practices.map(([title, body], index) => (
+                <li>
+                    <span>0{index + 1}</span>
+                    <h3>{title}</h3>
+                    <p>{body}</p>
+                </li>
+            ))}
+        </ol>
+    </section>
+
+    <section class="about-human" aria-labelledby="about-human-title" data-header-theme="light" data-reveal>
+        <div class="page-label"><span>{c.humanLabel}</span><span aria-hidden="true">AR / 05</span></div>
+        <div class="about-human-layout">
+            <figure>
+                <Image
+                    src={lifestyleDetail}
+                    alt={c.lifestyleAlt}
+                    widths={[480, 640, 832]}
+                    sizes="(max-width: 760px) 88vw, 38vw"
+                    loading="lazy"
+                />
+            </figure>
+            <div>
+                <h2 id="about-human-title">{c.humanTitle}</h2>
+                <p>{c.humanBody}</p>
+            </div>
+        </div>
+    </section>
+
+    <EditorialContact lang={lang} />
+    </main>
+</div>
+
+<style>
+    .about-page-shell {
+        overflow: clip;
+        background: #0a0a09;
+    }
+
+    .about-page {
+        --ink: #0a0a09;
+        --paper: #f0eee8;
+        --muted: #aaa79f;
+        --line: rgba(240, 238, 232, 0.19);
+        background: var(--ink);
+        color: var(--paper);
+    }
+
+    .about-page-shell[data-motion="ready"] [data-reveal] {
+        opacity: 0.48;
+        transform: translateY(2rem);
+        transition: opacity 800ms ease, transform 950ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .about-page-shell[data-motion="ready"] [data-reveal][data-visible="true"] {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .about-page > section:not(:last-child) {
+        padding: clamp(7rem, 13vw, 13rem) clamp(1.25rem, 5vw, 5.5rem);
+    }
+
+    .page-label {
+        display: flex;
+        justify-content: space-between;
+        padding-bottom: 1.35rem;
+        border-bottom: 1px solid currentColor;
+        color: var(--muted);
+        font-size: 0.68rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        opacity: 0.75;
+    }
+
+    .about-now > p,
+    .about-origin > p,
+    .about-human-layout p {
+        width: min(41rem, 92%);
+        margin: 0 0 0 auto;
+        color: var(--muted);
+        font-size: clamp(1.15rem, 1.8vw, 1.6rem);
+        line-height: 1.45;
+        letter-spacing: -0.025em;
+    }
+
+    .about-now,
+    .about-human {
+        min-height: 100svh;
+        background: var(--paper);
+        color: var(--ink);
+    }
+
+    .about-now .page-label,
+    .about-human .page-label {
+        color: #66645f;
+    }
+
+    .about-now h2,
+    .about-origin h2,
+    .about-human-layout h2,
+    .about-practice > h2 {
+        max-width: 12ch;
+        margin: clamp(5rem, 11vw, 10rem) 0;
+        overflow-wrap: break-word;
+        hyphens: auto;
+        font-size: clamp(3.5rem, 9vw, 10rem);
+        font-weight: 560;
+        line-height: 0.88;
+        letter-spacing: -0.072em;
+    }
+
+    .about-now > p,
+    .about-human-layout p {
+        color: #53514d;
+    }
+
+    .about-human-layout {
+        display: grid;
+        grid-template-columns: minmax(16rem, 0.72fr) minmax(24rem, 1fr);
+        gap: clamp(2rem, 7vw, 8rem);
+        align-items: end;
+        margin-top: clamp(4rem, 8vw, 8rem);
+    }
+
+    .about-human-layout figure {
+        margin: 0;
+        overflow: hidden;
+        aspect-ratio: 4 / 5;
+        background: #d8d5cd;
+    }
+
+    .about-human-layout figure :global(img) {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 42%;
+        filter: saturate(0.82) contrast(1.02);
+    }
+
+    .about-human-layout h2 {
+        margin-top: 0;
+    }
+
+    .about-human-layout p {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .about-origin {
+        min-height: 110svh;
+        background: #171714;
+    }
+
+    .about-origin h2 {
+        color: #d2ff3f;
+    }
+
+    .about-practice {
+        background: var(--ink);
+    }
+
+    .about-practice > h2 {
+        max-width: 10ch;
+    }
+
+    .about-practice ol {
+        margin: 0;
+        padding: 0;
+        border-top: 1px solid var(--line);
+        list-style: none;
+    }
+
+    .about-practice li {
+        display: grid;
+        grid-template-columns: 4rem minmax(12rem, 0.75fr) minmax(18rem, 1fr);
+        gap: 2rem;
+        padding: clamp(2rem, 4vw, 3.5rem) 0;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .about-practice li > span,
+    .about-practice li > p {
+        color: var(--muted);
+    }
+
+    .about-practice h3 {
+        margin: 0;
+        overflow-wrap: break-word;
+        hyphens: auto;
+        font-size: clamp(2rem, 4vw, 4.5rem);
+        font-weight: 520;
+        line-height: 0.92;
+        letter-spacing: -0.055em;
+    }
+
+    .about-practice li > p {
+        max-width: 34rem;
+        margin: 0;
+        font-size: clamp(1rem, 1.35vw, 1.25rem);
+        line-height: 1.45;
+    }
+
+    @media (max-width: 760px) {
+        .about-now > p,
+        .about-origin > p,
+        .about-human-layout p {
+            width: 100%;
+        }
+
+        .about-now,
+        .about-origin,
+        .about-human {
+            min-height: auto;
+        }
+
+        .about-now h2,
+        .about-origin h2,
+        .about-human-layout h2,
+        .about-practice > h2 {
+            margin-block: 5rem 3rem;
+            font-size: clamp(2.6rem, 13vw, 6rem);
+        }
+
+        .about-practice li {
+            grid-template-columns: 2rem 1fr;
+            gap: 1rem;
+        }
+
+        .about-practice li > p {
+            grid-column: 2;
+        }
+
+        .about-practice h3 {
+            font-size: 1.85rem;
+        }
+
+        .about-human-layout {
+            grid-template-columns: 1fr;
+            margin-top: 3rem;
+        }
+
+        .about-human-layout figure {
+            width: min(88vw, 32rem);
+        }
+    }
+</style>

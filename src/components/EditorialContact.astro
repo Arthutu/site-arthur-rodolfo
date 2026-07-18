@@ -1,0 +1,218 @@
+---
+import { Image } from "astro:assets";
+import closingPortrait from "../assets/arthur-closing-portrait.png";
+
+type Language = "en" | "ptBR" | "fr" | "es";
+
+interface Props {
+    lang: Language;
+}
+
+const { lang } = Astro.props;
+
+const copy = {
+    en: {
+        eyebrow: "Open to the right conversation",
+        title: "Let’s build what matters.",
+        email: "Start a conversation",
+        linkedin: "LinkedIn",
+        resume: "Résumé",
+    },
+    ptBR: {
+        eyebrow: "Aberto à conversa certa",
+        title: "Vamos construir o que importa.",
+        email: "Começar uma conversa",
+        linkedin: "LinkedIn",
+        resume: "Currículo",
+    },
+    fr: {
+        eyebrow: "Ouvert à la bonne conversation",
+        title: "Construisons ce qui compte.",
+        email: "Commencer une conversation",
+        linkedin: "LinkedIn",
+        resume: "CV",
+    },
+    es: {
+        eyebrow: "Abierto a la conversación correcta",
+        title: "Construyamos lo que importa.",
+        email: "Iniciar una conversación",
+        linkedin: "LinkedIn",
+        resume: "Currículum",
+    },
+} as const;
+
+const c = copy[lang];
+---
+
+<section class="editorial-contact" aria-labelledby="editorial-contact-title" data-header-theme="dark" data-reveal>
+    <div class="editorial-contact-media" aria-hidden="true">
+        <Image
+            src={closingPortrait}
+            alt=""
+            widths={[640, 960, 1280, 1536]}
+            sizes="100vw"
+            loading="lazy"
+        />
+    </div>
+    <p>{c.eyebrow}</p>
+    <h2 id="editorial-contact-title">{c.title}</h2>
+
+    <div class="editorial-contact-links">
+        <a href="mailto:arthurrodolfo81@gmail.com">{c.email}<span aria-hidden="true">↗</span></a>
+        <a href="https://www.linkedin.com/in/arthur-rodolfo/" target="_blank" rel="noopener noreferrer">{c.linkedin}<span aria-hidden="true">↗</span></a>
+        <a href="/arthur-rodolfo-resume.pdf" target="_blank" rel="noopener noreferrer">{c.resume}<span aria-hidden="true">↗</span></a>
+    </div>
+
+    <footer>
+        <span>Arthur Rodolfo</span>
+        <span>Vancouver, Canada</span>
+        <span>{new Date().getFullYear()}</span>
+    </footer>
+</section>
+
+<style>
+    .editorial-contact {
+        position: relative;
+        isolation: isolate;
+        overflow: hidden;
+        min-height: 92svh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: clamp(7rem, 13vw, 12rem) clamp(1.25rem, 5vw, 5.5rem) 2rem;
+        background: #080808;
+        color: #f0eee8;
+    }
+
+    .editorial-contact-media {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+    }
+
+    .editorial-contact-media::after {
+        position: absolute;
+        inset: 0;
+        background:
+            linear-gradient(90deg, rgba(5, 5, 5, 0.98) 0%, rgba(5, 5, 5, 0.78) 43%, rgba(5, 5, 5, 0.08) 78%),
+            linear-gradient(180deg, rgba(5, 5, 5, 0.48), transparent 28%, rgba(5, 5, 5, 0.74));
+        content: "";
+    }
+
+    .editorial-contact-media :global(img) {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 44%;
+        filter: saturate(0.72) contrast(1.08);
+    }
+
+    .editorial-contact > p,
+    .editorial-contact footer {
+        font-size: 0.68rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+    }
+
+    h2 {
+        max-width: 9ch;
+        margin: auto 0;
+        overflow-wrap: break-word;
+        hyphens: auto;
+        font-size: clamp(4rem, 13vw, 15rem);
+        font-weight: 680;
+        line-height: 0.78;
+        letter-spacing: -0.085em;
+        text-shadow: 0 0.08em 0.35em rgba(0, 0, 0, 0.32);
+    }
+
+    .editorial-contact-links {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        border-block: 1px solid rgba(240, 238, 232, 0.3);
+    }
+
+    .editorial-contact-links a {
+        display: flex;
+        min-height: 4.5rem;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.25rem 1rem 0;
+        border-right: 1px solid rgba(240, 238, 232, 0.3);
+        color: inherit;
+        text-decoration: none;
+        transition: padding 250ms ease, background 250ms ease;
+    }
+
+    .editorial-contact-links a + a {
+        padding-left: 1.25rem;
+    }
+
+    .editorial-contact-links a:last-child {
+        border-right: 0;
+    }
+
+    .editorial-contact-links a:hover,
+    .editorial-contact-links a:focus-visible {
+        padding-right: 0.75rem;
+        background: rgba(240, 238, 232, 0.12);
+        outline-color: #d2ff3f;
+    }
+
+    footer {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        padding-top: 1.4rem;
+    }
+
+    footer span:nth-child(2) {
+        text-align: center;
+    }
+
+    footer span:last-child {
+        text-align: right;
+    }
+
+    @media (max-width: 760px) {
+        .editorial-contact {
+            min-height: 86svh;
+        }
+
+        .editorial-contact-media::after {
+            background:
+                linear-gradient(180deg, rgba(5, 5, 5, 0.78) 0%, rgba(5, 5, 5, 0.32) 42%, rgba(5, 5, 5, 0.9) 100%),
+                linear-gradient(90deg, rgba(5, 5, 5, 0.82), transparent 90%);
+        }
+
+        .editorial-contact-media :global(img) {
+            object-position: 61% 44%;
+        }
+
+        h2 {
+            font-size: clamp(3rem, 15vw, 7.5rem);
+        }
+
+        .editorial-contact-links {
+            grid-template-columns: 1fr;
+        }
+
+        .editorial-contact-links a,
+        .editorial-contact-links a + a {
+            padding: 1rem 0;
+            border-right: 0;
+            border-bottom: 1px solid rgba(240, 238, 232, 0.3);
+        }
+
+        .editorial-contact-links a:last-child {
+            border-bottom: 0;
+        }
+
+        footer {
+            grid-template-columns: 1fr auto;
+        }
+
+        footer span:nth-child(2) {
+            display: none;
+        }
+    }
+</style>

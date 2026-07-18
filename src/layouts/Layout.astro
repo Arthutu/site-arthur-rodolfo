@@ -1,7 +1,7 @@
 ---
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header/Header.astro";
-import { getLangFromUrl } from "../i18n/utils";
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
 import "../styles/global.css";
 
 interface Props {
@@ -12,38 +12,49 @@ interface Props {
 
 const { title, description, immersive = false } = Astro.props;
 const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 const canonicalUrl = new URL(Astro.url.pathname, "https://www.arthurrodolfo.com");
+const htmlLang = lang === "ptBR" ? "pt-BR" : lang;
+const locale = lang === "ptBR" ? "pt_BR" : lang === "en" ? "en_CA" : lang;
+const [, , ...pathSegments] = Astro.url.pathname.split("/");
+const localizedPath = pathSegments.length ? `/${pathSegments.join("/")}` : "";
+const socialImage = "https://www.arthurrodolfo.com/social-card.png";
 ---
 
 <!doctype html>
-<html lang={lang} class="dark">
+<html lang={htmlLang} class="dark">
     <head>
         <meta charset="UTF-8" />
-        <meta
-            name="description"
-            property="og:description"
-            content={description}
-        />
+        <meta name="description" content={description} />
 
-        <meta property="og:url" content="https://www.arthurrodolfo.com/" />
+        <meta property="og:url" content={canonicalUrl} />
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="Arthur Rodolfo" />
-        <meta
-            name="og:image"
-            content="https://www.arthurrodolfo.com/arthur.png"
-        />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:locale" content={locale} />
+        <meta property="og:site_name" content="Arthur Rodolfo" />
+        <meta property="og:image" content={socialImage} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:alt" content="Arthur Rodolfo — Product Engineer" />
 
         <link rel="canonical" href={canonicalUrl} />
+        <link rel="alternate" hreflang="en" href={`https://www.arthurrodolfo.com/en${localizedPath}`} />
+        <link rel="alternate" hreflang="pt-BR" href={`https://www.arthurrodolfo.com/ptBR${localizedPath}`} />
+        <link rel="alternate" hreflang="fr" href={`https://www.arthurrodolfo.com/fr${localizedPath}`} />
+        <link rel="alternate" hreflang="es" href={`https://www.arthurrodolfo.com/es${localizedPath}`} />
+        <link rel="alternate" hreflang="x-default" href={`https://www.arthurrodolfo.com/en${localizedPath}`} />
         <meta name="theme-color" content="#0a0a09" />
 
         <meta name="twitter:card" content="summary_large_image" />
         <meta property="twitter:domain" content="arthurrodolfo.com" />
-        <meta property="twitter:url" content="https://www.arthurrodolfo.com/" />
+        <meta property="twitter:url" content={canonicalUrl} />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
         <meta
             name="twitter:image"
-            content="https://www.arthurrodolfo.com/arthur.png"
+            content={socialImage}
         />
         <meta name="twitter:site" content="@arthurlrodolfo" />
         <meta name="twitter:creator" content="@arthurlrodolfo" />
@@ -58,12 +69,13 @@ const canonicalUrl = new URL(Astro.url.pathname, "https://www.arthurrodolfo.com"
         <title>{title}</title>
     </head>
     <body class:list={["site-body", { "immersive-page": immersive }]}>
+        <a class="global-skip-link" href="#main-content">{t("skip.content")}</a>
         <Header />
         {
             immersive ? (
                 <div class="immersive-content"><slot /></div>
             ) : (
-                <main class="standard-content"><slot /></main>
+                <main id="main-content" class="standard-content"><slot /></main>
             )
         }
         {!immersive && <Footer />}
@@ -71,6 +83,24 @@ const canonicalUrl = new URL(Astro.url.pathname, "https://www.arthurrodolfo.com"
 </html>
 
 <style is:global>
+    .global-skip-link {
+        position: fixed;
+        top: 0.75rem;
+        left: 0.75rem;
+        z-index: 120;
+        padding: 0.75rem 1rem;
+        background: #f0eee8;
+        color: #0a0a09;
+        font-weight: 700;
+        text-decoration: none;
+        transform: translateY(-180%);
+        transition: transform 180ms ease;
+    }
+
+    .global-skip-link:focus {
+        transform: translateY(0);
+    }
+
     ::selection {
         background-color: var(--highlight-background-color);
         color: var(--highlight-color);

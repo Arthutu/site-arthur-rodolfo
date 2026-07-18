@@ -5,6 +5,8 @@ import LanguagePicker from "./LanguagePicker.astro";
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const isHome = Astro.url.pathname === `/${lang}` || Astro.url.pathname === `/${lang}/`;
+const isAbout = Astro.url.pathname === `/${lang}/about`;
+const isExperience = Astro.url.pathname === `/${lang}/experience`;
 ---
 
 <header class:list={["site-header", { "site-header-home": isHome }]}>
@@ -17,17 +19,19 @@ const isHome = Astro.url.pathname === `/${lang}` || Astro.url.pathname === `/${l
         class="menu-toggle"
         type="button"
         aria-expanded="false"
-        aria-controls="site-navigation">
-        <span class="sr-only">Menu</span>
+        aria-controls="site-navigation"
+        aria-label={t("nav.menu")}
+        data-open-label={t("nav.closeMenu")}
+        data-closed-label={t("nav.menu")}>
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
     </button>
 
     <nav id="site-navigation" class="site-navigation" aria-label="Primary navigation">
-        <a href={`/${lang}/about`}>{t("nav.about")}</a>
-        <a href={`/${lang}/experience`}>{t("nav.experience")}</a>
-        <a href="/arthur-rodolfo-resume.pdf" target="_blank">Résumé <span aria-hidden="true">↗</span></a>
-        <a href="mailto:arthurrodolfo81@gmail.com">Contact <span aria-hidden="true">↗</span></a>
+        <a href={`/${lang}/about`} aria-current={isAbout ? "page" : undefined}>{t("nav.about")}</a>
+        <a href={`/${lang}/experience`} aria-current={isExperience ? "page" : undefined}>{t("nav.experience")}</a>
+        <a href="/arthur-rodolfo-resume.pdf" target="_blank" rel="noopener noreferrer">{t("nav.resume")} <span aria-hidden="true">↗</span></a>
+        <a href="mailto:arthurrodolfo81@gmail.com">{t("nav.contact")} <span aria-hidden="true">↗</span></a>
         <LanguagePicker />
     </nav>
 </header>
@@ -36,15 +40,31 @@ const isHome = Astro.url.pathname === `/${lang}` || Astro.url.pathname === `/${l
     const header = document.querySelector<HTMLElement>(".site-header");
     const toggle = header?.querySelector<HTMLButtonElement>(".menu-toggle");
     const navigation = header?.querySelector<HTMLElement>(".site-navigation");
+    const main = document.querySelector<HTMLElement>("#main-content");
+    let restoreFocus: HTMLElement | null = null;
 
-    const setOpen = (open: boolean) => {
+    const getFocusable = () => navigation
+        ? Array.from(navigation.querySelectorAll<HTMLElement>('a[href], select, button:not([disabled]), [tabindex]:not([tabindex="-1"])'))
+        : [];
+
+    const setOpen = (open: boolean, moveFocus = false) => {
         if (!header || !toggle || !navigation) return;
         header.toggleAttribute("data-menu-open", open);
         toggle.setAttribute("aria-expanded", String(open));
+        toggle.setAttribute("aria-label", open ? toggle.dataset.openLabel ?? "Close menu" : toggle.dataset.closedLabel ?? "Open menu");
+        document.body.style.overflow = open ? "hidden" : "";
+        main?.toggleAttribute("inert", open);
+
+        if (open) {
+            restoreFocus = document.activeElement instanceof HTMLElement ? document.activeElement : toggle;
+            if (moveFocus) window.setTimeout(() => getFocusable()[0]?.focus(), 0);
+        } else if (moveFocus) {
+            restoreFocus?.focus();
+        }
     };
 
     toggle?.addEventListener("click", () => {
-        setOpen(toggle.getAttribute("aria-expanded") !== "true");
+        setOpen(toggle.getAttribute("aria-expanded") !== "true", true);
     });
 
     navigation?.querySelectorAll("a").forEach((link) => {
@@ -52,8 +72,45 @@ const isHome = Astro.url.pathname === `/${lang}` || Astro.url.pathname === `/${l
     });
 
     window.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") setOpen(false);
+        if (event.key === "Escape" && toggle?.getAttribute("aria-expanded") === "true") {
+            setOpen(false, true);
+            return;
+        }
+
+        if (event.key !== "Tab" || toggle?.getAttribute("aria-expanded") !== "true") return;
+        const focusable = [toggle, ...getFocusable()];
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last?.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first?.focus();
+        }
     });
+
+    const desktopQuery = window.matchMedia("(min-width: 761px)");
+    desktopQuery.addEventListener("change", (event) => {
+        if (event.matches) setOpen(false);
+    });
+
+    const themedSections = Array.from(document.querySelectorAll<HTMLElement>("[data-header-theme]"));
+    if (themedSections.length && header) {
+        const updateHeaderTone = () => {
+            const sampleLine = 36;
+            const current = themedSections.find((section) => {
+                const rect = section.getBoundingClientRect();
+                return rect.top <= sampleLine && rect.bottom > sampleLine;
+            });
+            header.dataset.tone = current?.dataset.headerTheme ?? "dark";
+        };
+
+        window.addEventListener("scroll", updateHeaderTone, { passive: true });
+        window.addEventListener("resize", updateHeaderTone, { passive: true });
+        updateHeaderTone();
+    }
 </script>
 
 <style>
@@ -78,6 +135,17 @@ const isHome = Astro.url.pathname === `/${lang}` || Astro.url.pathname === `/${l
         background: linear-gradient(to bottom, rgba(10, 10, 9, 0.64), transparent);
         border-color: transparent;
         backdrop-filter: none;
+    }
+
+    .site-header[data-tone="light"] {
+        color: #0a0a09;
+        border-color: rgba(10, 10, 9, 0.18);
+        background: rgba(240, 238, 232, 0.78);
+        backdrop-filter: blur(18px);
+    }
+
+    .site-header[data-tone="light"] .site-mark > span:first-child {
+        border-color: rgba(10, 10, 9, 0.42);
     }
 
     .site-mark {
@@ -129,7 +197,7 @@ const isHome = Astro.url.pathname === `/${lang}` || Astro.url.pathname === `/${l
         min-height: 2.75rem;
         gap: 0.25rem;
         color: inherit;
-        font-size: 0.67rem;
+        font-size: 0.75rem;
         letter-spacing: 0.12em;
         text-decoration: none;
         text-transform: uppercase;
@@ -149,7 +217,8 @@ const isHome = Astro.url.pathname === `/${lang}` || Astro.url.pathname === `/${l
     }
 
     .site-navigation :global(a:hover)::after,
-    .site-navigation :global(a:focus-visible)::after {
+    .site-navigation :global(a:focus-visible)::after,
+    .site-navigation :global(a[aria-current="page"])::after {
         transform: scaleX(1);
         transform-origin: left;
     }
@@ -176,6 +245,16 @@ const isHome = Astro.url.pathname === `/${lang}` || Astro.url.pathname === `/${l
     @media (max-width: 760px) {
         .site-header {
             min-height: 4rem;
+            backdrop-filter: none;
+        }
+
+        .site-header[data-tone="light"] {
+            backdrop-filter: none;
+        }
+
+        .site-mark {
+            position: relative;
+            z-index: 2;
         }
 
         .site-mark-full {
@@ -225,6 +304,10 @@ const isHome = Astro.url.pathname === `/${lang}` || Astro.url.pathname === `/${l
             visibility: visible;
             opacity: 1;
             transform: translateY(0);
+        }
+
+        .site-header[data-menu-open] {
+            color: #0a0a09;
         }
 
         .site-header[data-menu-open] .menu-toggle {
