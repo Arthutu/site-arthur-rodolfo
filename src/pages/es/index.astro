@@ -1,56 +1,11 @@
 ---
+import CinematicHome from "../../components/CinematicHome.astro";
 import Layout from "../../layouts/Layout.astro";
-import { Icon } from "astro-icon/components";
-import { Image } from "astro:assets";
-import arthurPicture from "../../assets/arthur.jpg";
 ---
 
 <Layout
-    title="Arthur Rodolfo"
-    description="Ingeniero de Software en Vancouver, construyendo productos con cuidado y precisión">
-    <section
-        class="mx-auto max-w-3xl flex flex-col gap-8 lg:gap-12 min-h-[calc(100vh-12rem)] justify-center"
-        aria-label="Presentación de Arthur Rodolfo">
-        <div class="flex flex-col lg:flex-row items-center lg:items-start gap-8">
-            <Image
-                class="w-32 h-32 lg:w-40 lg:h-40 rounded-full object-cover shadow-lg"
-                src={arthurPicture}
-                alt="Arthur Rodolfo"
-                loading="eager"
-            />
-
-            <div class="flex-1 flex flex-col gap-4">
-                <div>
-                    <h1 class="text-4xl lg:text-5xl font-bold mb-2">
-                        Arthur Rodolfo
-                    </h1>
-                    <p class="text-xl lg:text-2xl text-slate-600 dark:text-slate-400">
-                        Ingeniero de Software
-                    </p>
-                </div>
-
-                <p class="text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
-                    ¡Hola! Soy un ingeniero de software de Brasil <Icon
-                        name="twemoji:flag-for-brazil"
-                        class="inline-block h-5 w-5"
-                    /> actualmente basado en Vancouver <Icon
-                        name="twemoji:flag-for-canada"
-                        class="inline-block h-5 w-5"
-                    />. Construyo aplicaciones web con enfoque en código limpio y grandes experiencias de usuario, aprovechando herramientas de IA para entregar más rápido.
-                </p>
-
-                <p class="text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
-                    Actualmente trabajo en <a href="https://www.clio.com/" target="_blank" rel="noopener noreferrer" class="font-medium underline decoration-2 underline-offset-2 hover:text-slate-900 dark:hover:text-white transition-colors">Clio</a> en el equipo de Platform, ayudando a integrar productos en una plataforma unificada. Anteriormente, trabajé con empresas como Hubly, BTG Pactual y otras, construyendo desde sistemas de e-commerce hasta herramientas de monitoreo financiero.
-                </p>
-
-                <a 
-                    href="mailto:arthurrodolfo81@gmail.com" 
-                    class="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg font-medium hover:bg-slate-700 dark:hover:bg-slate-200 transition-colors w-fit"
-                >
-                    <Icon name="mdi:email-outline" class="w-5 h-5" />
-                    Hablemos
-                </a>
-            </div>
-        </div>
-    </section>
+    title="Arthur Rodolfo — Ingeniero de Producto"
+    description="Arthur Rodolfo es un ingeniero de software orientado a producto en Vancouver, trabajando entre ingeniería, producto e IA."
+    immersive>
+    <CinematicHome lang="es" />
 </Layout>

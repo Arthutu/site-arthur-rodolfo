@@ -5,12 +5,12 @@ import { getLangFromUrl } from "../../i18n/utils";
 const lang = getLangFromUrl(Astro.url);
 ---
 
-<label>
-    <span class="sr-only">Language Selector</span>
+<label class="language-picker">
+    <span class="sr-only">Language</span>
     <select
         name="languages"
         id="language-select"
-        class="rounded-lg border-2 border-indigo-200 p-0.5 text-xs lg:p-1 dark:border-neutral-800 dark:bg-neutral-950 dark:text-white">
+        aria-label="Language">
         {
             Object.entries(languages).map(([code, name]) => {
                 return (
@@ -22,6 +22,45 @@ const lang = getLangFromUrl(Astro.url);
         }
     </select>
 </label>
+
+<style>
+    .language-picker {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    select {
+        min-height: 2.75rem;
+        padding: 0 1.6rem 0 0.5rem;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        font-size: 0.67rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        cursor: pointer;
+    }
+
+    select:focus-visible {
+        outline: 1px solid currentColor;
+        outline-offset: 2px;
+    }
+
+    @media (max-width: 760px) {
+        .language-picker {
+            margin-top: 2rem;
+        }
+
+        select {
+            min-width: 12rem;
+            border: 1px solid rgba(10, 10, 9, 0.34);
+            padding: 0 2.5rem 0 0.9rem;
+            font-size: 0.72rem;
+        }
+    }
+</style>
 
 <script>
     const select = document.querySelector(
