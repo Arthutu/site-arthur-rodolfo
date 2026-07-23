@@ -1,10 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
 
-import { getLangFromUrl, useTranslations } from "../i18n/utils";
+import { t } from "../lib/strings";
 
-const lang = getLangFromUrl(Astro.url);
-const t = useTranslations(lang);
 ---
 
 <Layout
@@ -15,9 +13,15 @@ const t = useTranslations(lang);
         <p class="text-sm">
             {t("404.description")}
             {" "}
-            <span class="font-bold">
-                {Astro.url.pathname}
-            </span>.
+            <span class="font-bold" data-requested-path></span>
         </p>
+        {/* This page is prerendered, so Astro.url.pathname here is the 404
+            page's own path, never the URL the visitor actually asked for. */}
+        <script is:inline>
+            (function () {
+                var el = document.querySelector("[data-requested-path]");
+                if (el) el.textContent = window.location.pathname + ".";
+            })();
+        </script>
     </div>
 </Layout>

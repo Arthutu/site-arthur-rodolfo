@@ -1,16 +1,11 @@
 ---
-// Redirect handled by Cloudflare _redirects file
-// This page should not be rendered in production
+import CinematicHome from "../components/CinematicHome.astro";
+import Layout from "../layouts/Layout.astro";
 ---
 
-<!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="refresh" content="0;url=/en" />
-        <script>
-            window.location.replace("/en");
-        </script>
-        <title>Redirecting...</title>
-    </head>
-</html>
+<Layout
+    title="Arthur Rodolfo — Product Engineer"
+    description="Software engineer in Vancouver — platform work at Clio, previously Hubly and BTG Pactual. Six years, five companies, two countries."
+    immersive>
+    <CinematicHome lang="en" />
+</Layout>

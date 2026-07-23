@@ -1,7 +1,18 @@
 # Cloudflare Pages redirects
-# Redirect root to /en
-/  /en  301
-/en/projects  /en  301
-/ptBR/projects  /ptBR  301
-/fr/projects  /fr  301
-/es/projects  /es  301
+# The site was previously served under /en, /ptBR, /fr and /es. It is now
+# English-only at the root; these keep every previously indexed URL working.
+/en            /             301
+/ptBR          /             301
+/fr            /             301
+/es            /             301
+/en/about      /about        301
+/ptBR/about    /about        301
+/fr/about      /about        301
+/es/about      /about        301
+/en/experience /experience   301
+/ptBR/experience /experience 301
+/fr/experience /experience   301
+/es/experience /experience   301
+# retired section
+/projects      /             301
+/en/projects   /             301

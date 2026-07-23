@@ -1,93 +1,149 @@
 ---
 import { Image } from "astro:assets";
-import closingPortrait from "../assets/arthur-closing-portrait.png";
+import closingPortrait from "../assets/arthur-closing-portrait.webp";
+import { t } from "../lib/strings";
 
-type Language = "en" | "ptBR" | "fr" | "es";
-
-interface Props {
-    lang: Language;
-}
-
-const { lang } = Astro.props;
-
-const copy = {
-    en: {
-        eyebrow: "Open to the right conversation",
-        title: "Let’s build what matters.",
-        email: "Start a conversation",
-        linkedin: "LinkedIn",
-        resume: "Résumé",
-    },
-    ptBR: {
-        eyebrow: "Aberto à conversa certa",
-        title: "Vamos construir o que importa.",
-        email: "Começar uma conversa",
-        linkedin: "LinkedIn",
-        resume: "Currículo",
-    },
-    fr: {
-        eyebrow: "Ouvert à la bonne conversation",
-        title: "Construisons ce qui compte.",
-        email: "Commencer une conversation",
-        linkedin: "LinkedIn",
-        resume: "CV",
-    },
-    es: {
-        eyebrow: "Abierto a la conversación correcta",
-        title: "Construyamos lo que importa.",
-        email: "Iniciar una conversación",
-        linkedin: "LinkedIn",
-        resume: "Currículum",
-    },
+const c = {
+    title: "Let’s talk.",
+    email: "Email me",
+    linkedin: "LinkedIn",
+    cursorEmail: "Email",
+    cursorProfile: "Profile",
 } as const;
 
-const c = copy[lang];
 ---
 
-<section class="editorial-contact" aria-labelledby="editorial-contact-title" data-header-theme="dark" data-reveal>
+<section class="editorial-contact" aria-labelledby="editorial-contact-title" data-header-theme="dark" data-closing>
     <div class="editorial-contact-media" aria-hidden="true">
         <Image
             src={closingPortrait}
             alt=""
-            widths={[640, 960, 1280, 1536]}
+            widths={[640, 960, 1280, 1920, 2560]}
+            quality={90}
             sizes="100vw"
             loading="lazy"
         />
     </div>
-    <p>{c.eyebrow}</p>
-    <h2 id="editorial-contact-title">{c.title}</h2>
 
-    <div class="editorial-contact-links">
-        <a href="mailto:arthurrodolfo81@gmail.com">{c.email}<span aria-hidden="true">↗</span></a>
-        <a href="https://www.linkedin.com/in/arthur-rodolfo/" target="_blank" rel="noopener noreferrer">{c.linkedin}<span aria-hidden="true">↗</span></a>
-        <a href="/arthur-rodolfo-resume.pdf" target="_blank" rel="noopener noreferrer">{c.resume}<span aria-hidden="true">↗</span></a>
+    <div class="editorial-contact-stage">
+        <h2 id="editorial-contact-title" data-kinetic>{c.title}</h2>
     </div>
 
-    <footer>
-        <span>Arthur Rodolfo</span>
-        <span>Vancouver, Canada</span>
-        <span>{new Date().getFullYear()}</span>
-    </footer>
+    <div class="editorial-contact-end" data-closing-end>
+        <div class="editorial-contact-links">
+            <a href="mailto:arthurrodolfo81@gmail.com" data-magnetic data-cursor-label={c.cursorEmail}>{c.email}<span class="link-arrow" aria-hidden="true">↗</span></a>
+            <a href="https://www.linkedin.com/in/arthur-rodolfo/" target="_blank" rel="noopener noreferrer" data-magnetic data-cursor-label={c.cursorProfile}>
+                {c.linkedin}<span class="sr-only"> ({t("a11y.newTab")})</span><span class="link-arrow" aria-hidden="true">↗</span>
+            </a>
+        </div>
+
+        <footer>
+            <span>Arthur Rodolfo</span>
+            <span>Vancouver, Canada</span>
+            <span>{new Date().getFullYear()}</span>
+        </footer>
+    </div>
 </section>
+
+<script>
+    import { onScroll } from "../scripts/scroll";
+
+    const closing = document.querySelector<HTMLElement>("[data-closing]");
+
+    if (closing && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        closing.setAttribute("data-motion", "ready");
+
+        // The portrait gradually emerges from black as the section scrolls in.
+        // Gated on the section itself — it sits at the very bottom of every
+        // page, so ungated it measured on every frame of the whole document.
+        onScroll(() => {
+            const rect = closing.getBoundingClientRect();
+            const vh = window.innerHeight;
+            const emerge = Math.max(0, Math.min(1, (vh - rect.top) / (rect.height + vh * 0.4)));
+            closing.style.setProperty("--emerge", emerge.toFixed(3));
+        }, closing);
+
+        // Contact links and footer land as the deliberate final beat.
+        const end = closing.querySelector<HTMLElement>("[data-closing-end]");
+        if (end) {
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (!entry.isIntersecting) return;
+                        end.setAttribute("data-visible", "true");
+                        observer.unobserve(entry.target);
+                    });
+                },
+                { threshold: 0.25 }
+            );
+            observer.observe(end);
+        }
+    }
+</script>
 
 <style>
     .editorial-contact {
         position: relative;
         isolation: isolate;
-        overflow: hidden;
-        min-height: 92svh;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        padding: clamp(7rem, 13vw, 12rem) clamp(1.25rem, 5vw, 5.5rem) 2rem;
+        min-height: 118svh;
+        padding: 0 clamp(1.25rem, 5vw, 5.5rem) 2rem;
         background: #080808;
-        color: #f0eee8;
+        color: var(--paper);
     }
 
     .editorial-contact-media {
         position: absolute;
         inset: 0;
         z-index: -1;
+        overflow: hidden;
+    }
+
+    /* Portrait emerges from black on scroll. No transition here — --emerge is
+       rewritten every frame, so a transition would restart continuously. */
+    [data-closing][data-motion="ready"] .editorial-contact-media :global(img) {
+        opacity: calc(0.16 + 0.84 * var(--emerge, 0));
+        transform: scale(calc(1.12 - 0.12 * var(--emerge, 0)));
+    }
+
+    /* The headline stays pinned while the portrait moves into view. */
+    .editorial-contact-stage {
+        position: sticky;
+        top: 0;
+        display: flex;
+        min-height: 100svh;
+        flex-direction: column;
+        justify-content: center;
+        padding-block: clamp(7rem, 13vw, 12rem);
+    }
+
+    .editorial-contact-end {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: clamp(2.5rem, 6vw, 5rem);
+        padding-top: clamp(3rem, 8vw, 6rem);
+    }
+
+    [data-closing][data-motion="ready"] .editorial-contact-links {
+        opacity: 0;
+        transform: translateY(1.6rem);
+        transition:
+            opacity 900ms ease 120ms,
+            transform 1000ms var(--ease-cinematic) 120ms;
+    }
+
+    [data-closing][data-motion="ready"] footer {
+        opacity: 0;
+        transform: translateY(1.2rem);
+        transition:
+            opacity 900ms ease 340ms,
+            transform 1000ms var(--ease-cinematic) 340ms;
+    }
+
+    [data-closing][data-motion="ready"] [data-closing-end][data-visible="true"] .editorial-contact-links,
+    [data-closing][data-motion="ready"] [data-closing-end][data-visible="true"] footer {
+        opacity: 1;
+        transform: translateY(0);
     }
 
     .editorial-contact-media::after {
@@ -107,28 +163,38 @@ const c = copy[lang];
         filter: saturate(0.72) contrast(1.08);
     }
 
-    .editorial-contact > p,
+    .editorial-contact-eyebrow,
     .editorial-contact footer {
         font-size: 0.68rem;
         letter-spacing: 0.18em;
         text-transform: uppercase;
     }
 
+    .editorial-contact-eyebrow {
+        margin: 0 0 clamp(1.75rem, 3.5vw, 2.75rem);
+    }
+
+    /* 10ch is the tightest measure that fits every locale's longest word:
+       "Let’s"/"talk." 5ch, "conversar." 10ch, "Parlons." 8ch, "Hablemos." 9ch.
+       No per-locale override is needed now — the old fr/es 12ch rule existed
+       only because "Construisons"/"Construyamos" were 12ch. */
     h2 {
-        max-width: 9ch;
-        margin: auto 0;
+        max-width: 10ch;
+        margin: 0;
         overflow-wrap: break-word;
+        -webkit-hyphens: auto;
         hyphens: auto;
+        font-family: var(--font-display);
         font-size: clamp(4rem, 13vw, 15rem);
-        font-weight: 680;
-        line-height: 0.78;
-        letter-spacing: -0.085em;
+        font-weight: 650;
+        line-height: 0.84;
+        letter-spacing: -0.05em;
         text-shadow: 0 0.08em 0.35em rgba(0, 0, 0, 0.32);
     }
 
     .editorial-contact-links {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
         border-block: 1px solid rgba(240, 238, 232, 0.3);
     }
 
@@ -141,7 +207,21 @@ const c = copy[lang];
         border-right: 1px solid rgba(240, 238, 232, 0.3);
         color: inherit;
         text-decoration: none;
-        transition: padding 250ms ease, background 250ms ease;
+        transform: translate3d(var(--magnet-x, 0), var(--magnet-y, 0), 0);
+        transition:
+            padding 250ms ease,
+            background 250ms ease,
+            transform 320ms var(--ease-cinematic);
+    }
+
+    .link-arrow {
+        display: inline-block;
+        transition: transform 300ms var(--ease-cinematic);
+    }
+
+    .editorial-contact-links a:hover .link-arrow,
+    .editorial-contact-links a:focus-visible .link-arrow {
+        transform: translate(0.22rem, -0.22rem);
     }
 
     .editorial-contact-links a + a {
@@ -156,7 +236,7 @@ const c = copy[lang];
     .editorial-contact-links a:focus-visible {
         padding-right: 0.75rem;
         background: rgba(240, 238, 232, 0.12);
-        outline-color: #d2ff3f;
+        outline-color: var(--accent);
     }
 
     footer {
@@ -175,7 +255,12 @@ const c = copy[lang];
 
     @media (max-width: 760px) {
         .editorial-contact {
-            min-height: 86svh;
+            min-height: auto;
+        }
+
+        .editorial-contact-stage {
+            min-height: 90svh;
+            padding-block: clamp(6rem, 18vw, 9rem);
         }
 
         .editorial-contact-media::after {

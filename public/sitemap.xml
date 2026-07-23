@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://www.arthurrodolfo.com/en</loc></url>
-  <url><loc>https://www.arthurrodolfo.com/en/about</loc></url>
-  <url><loc>https://www.arthurrodolfo.com/en/experience</loc></url>
-  <url><loc>https://www.arthurrodolfo.com/ptBR</loc></url>
-  <url><loc>https://www.arthurrodolfo.com/ptBR/about</loc></url>
-  <url><loc>https://www.arthurrodolfo.com/ptBR/experience</loc></url>
-  <url><loc>https://www.arthurrodolfo.com/fr</loc></url>
-  <url><loc>https://www.arthurrodolfo.com/fr/about</loc></url>
-  <url><loc>https://www.arthurrodolfo.com/fr/experience</loc></url>
-  <url><loc>https://www.arthurrodolfo.com/es</loc></url>
-  <url><loc>https://www.arthurrodolfo.com/es/about</loc></url>
-  <url><loc>https://www.arthurrodolfo.com/es/experience</loc></url>
+<urlset xmlns="http://www.sitemap.org/schemas/sitemap/0.9">
+  <url><loc>https://www.arthurrodolfo.com/</loc><priority>1.0</priority></url>
+  <url><loc>https://www.arthurrodolfo.com/about</loc><priority>0.8</priority></url>
+  <url><loc>https://www.arthurrodolfo.com/experience</loc><priority>0.8</priority></url>
 </urlset>

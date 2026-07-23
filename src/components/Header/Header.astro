@@ -1,17 +1,17 @@
 ---
-import { getLangFromUrl, useTranslations } from "../../i18n/utils";
-import LanguagePicker from "./LanguagePicker.astro";
+import { getCleanPath } from "../../lib/path";
+import { t } from "../../lib/strings";
+import SiteMark from "./SiteMark.astro";
 
-const lang = getLangFromUrl(Astro.url);
-const t = useTranslations(lang);
-const isHome = Astro.url.pathname === `/${lang}` || Astro.url.pathname === `/${lang}/`;
-const isAbout = Astro.url.pathname === `/${lang}/about`;
-const isExperience = Astro.url.pathname === `/${lang}/experience`;
+const path = getCleanPath(Astro.url);
+const isHome = path === "/";
+const isAbout = path === "/about";
+const isExperience = path === "/experience";
 ---
 
 <header class:list={["site-header", { "site-header-home": isHome }]}>
-    <a class="site-mark" href={`/${lang}`} aria-label="Arthur Rodolfo — Home">
-        <span>AR</span>
+    <a class="site-mark" href="/" aria-label={t("nav.homeLabel")} data-magnetic="0.2">
+        <SiteMark />
         <span class="site-mark-full">Arthur Rodolfo</span>
     </a>
 
@@ -27,20 +27,25 @@ const isExperience = Astro.url.pathname === `/${lang}/experience`;
         <span aria-hidden="true"></span>
     </button>
 
-    <nav id="site-navigation" class="site-navigation" aria-label="Primary navigation">
-        <a href={`/${lang}/about`} aria-current={isAbout ? "page" : undefined}>{t("nav.about")}</a>
-        <a href={`/${lang}/experience`} aria-current={isExperience ? "page" : undefined}>{t("nav.experience")}</a>
-        <a href="/arthur-rodolfo-resume.pdf" target="_blank" rel="noopener noreferrer">{t("nav.resume")} <span aria-hidden="true">↗</span></a>
+    <nav id="site-navigation" class="site-navigation" aria-label={t("nav.primary")}>
+        <a href="/about" aria-current={isAbout ? "page" : undefined}>{t("nav.about")}</a>
+        <a href="/experience" aria-current={isExperience ? "page" : undefined}>{t("nav.experience")}</a>
         <a href="mailto:arthurrodolfo81@gmail.com">{t("nav.contact")} <span aria-hidden="true">↗</span></a>
-        <LanguagePicker />
     </nav>
 </header>
+
 
 <script>
     const header = document.querySelector<HTMLElement>(".site-header");
     const toggle = header?.querySelector<HTMLButtonElement>(".menu-toggle");
     const navigation = header?.querySelector<HTMLElement>(".site-navigation");
-    const main = document.querySelector<HTMLElement>("#main-content");
+    const siteMark = header?.querySelector<HTMLElement>(".site-mark");
+    // The hero sits outside <main> on every page type, and the footer is
+    // outside it too — inerting only #main-content left both reachable to a
+    // screen reader's virtual cursor while the menu was open.
+    const behindMenu = Array.from(
+        document.querySelectorAll<HTMLElement>("#main-content, .site-body > footer, [data-hero], [data-inner-hero]")
+    );
     let restoreFocus: HTMLElement | null = null;
 
     const getFocusable = () => navigation
@@ -53,7 +58,11 @@ const isExperience = Astro.url.pathname === `/${lang}/experience`;
         toggle.setAttribute("aria-expanded", String(open));
         toggle.setAttribute("aria-label", open ? toggle.dataset.openLabel ?? "Close menu" : toggle.dataset.closedLabel ?? "Open menu");
         document.body.style.overflow = open ? "hidden" : "";
-        main?.toggleAttribute("inert", open);
+        behindMenu.forEach((region) => region.toggleAttribute("inert", open));
+
+        // Inertia scrolling must pause while the menu owns the screen.
+        if (open) window.__arLenis?.stop();
+        else window.__arLenis?.start();
 
         if (open) {
             restoreFocus = document.activeElement instanceof HTMLElement ? document.activeElement : toggle;
@@ -78,7 +87,9 @@ const isExperience = Astro.url.pathname === `/${lang}/experience`;
         }
 
         if (event.key !== "Tab" || toggle?.getAttribute("aria-expanded") !== "true") return;
-        const focusable = [toggle, ...getFocusable()];
+        // The site mark stays visible above the menu overlay, so it has to be
+        // inside the trap — it was clickable but keyboard-unreachable.
+        const focusable = [siteMark, toggle, ...getFocusable()].filter(Boolean) as HTMLElement[];
         const first = focusable[0];
         const last = focusable[focusable.length - 1];
 
@@ -98,17 +109,33 @@ const isExperience = Astro.url.pathname === `/${lang}/experience`;
 
     const themedSections = Array.from(document.querySelectorAll<HTMLElement>("[data-header-theme]"));
     if (themedSections.length && header) {
+        let ticking = false;
+
         const updateHeaderTone = () => {
             const sampleLine = 36;
-            const current = themedSections.find((section) => {
-                const rect = section.getBoundingClientRect();
-                return rect.top <= sampleLine && rect.bottom > sampleLine;
-            });
+            // Chapters deliberately overlap via negative margins, and the LATER
+            // section paints on top. Taking the first match would read the
+            // section underneath and leave light text on the ivory chapters.
+            let current: HTMLElement | undefined;
+            for (let i = themedSections.length - 1; i >= 0; i -= 1) {
+                const rect = themedSections[i].getBoundingClientRect();
+                if (rect.top <= sampleLine && rect.bottom > sampleLine) {
+                    current = themedSections[i];
+                    break;
+                }
+            }
             header.dataset.tone = current?.dataset.headerTheme ?? "dark";
+            ticking = false;
         };
 
-        window.addEventListener("scroll", updateHeaderTone, { passive: true });
-        window.addEventListener("resize", updateHeaderTone, { passive: true });
+        const requestToneUpdate = () => {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(updateHeaderTone);
+        };
+
+        window.addEventListener("scroll", requestToneUpdate, { passive: true });
+        window.addEventListener("resize", requestToneUpdate, { passive: true });
         updateHeaderTone();
     }
 </script>
@@ -127,7 +154,7 @@ const isExperience = Astro.url.pathname === `/${lang}/experience`;
         padding: 0 clamp(1.25rem, 3vw, 3rem);
         border-bottom: 1px solid rgba(240, 238, 232, 0.16);
         background: rgba(10, 10, 9, 0.82);
-        color: #f0eee8;
+        color: var(--paper);
         backdrop-filter: blur(18px);
     }
 
@@ -138,14 +165,22 @@ const isExperience = Astro.url.pathname === `/${lang}/experience`;
     }
 
     .site-header[data-tone="light"] {
-        color: #0a0a09;
+        color: var(--ink);
         border-color: rgba(10, 10, 9, 0.18);
         background: rgba(240, 238, 232, 0.78);
         backdrop-filter: blur(18px);
     }
 
-    .site-header[data-tone="light"] .site-mark > span:first-child {
-        border-color: rgba(10, 10, 9, 0.42);
+    /* The AR / monogram. Outlined paths, so it never waits on the webfont;
+       the letters take currentColor and follow the header tone. */
+    .site-mark :global(.site-mark-svg) {
+        height: 0.92rem;
+        width: auto;
+        overflow: visible;
+    }
+
+    .site-mark :global(.site-mark-slash) {
+        fill: var(--accent);
     }
 
     .site-mark {
@@ -161,16 +196,6 @@ const isExperience = Astro.url.pathname === `/${lang}/experience`;
         text-transform: uppercase;
     }
 
-    .site-mark > span:first-child {
-        display: grid;
-        width: 2.25rem;
-        height: 2.25rem;
-        place-items: center;
-        border: 1px solid rgba(240, 238, 232, 0.36);
-        border-radius: 50%;
-        font-size: 0.65rem;
-        letter-spacing: -0.04em;
-    }
 
     .site-mark-full {
         opacity: 0;
@@ -190,7 +215,7 @@ const isExperience = Astro.url.pathname === `/${lang}/experience`;
         gap: clamp(1rem, 2.5vw, 2.5rem);
     }
 
-    .site-navigation :global(a) {
+    .site-navigation > :global(a) {
         position: relative;
         display: inline-flex;
         align-items: center;
@@ -203,7 +228,7 @@ const isExperience = Astro.url.pathname === `/${lang}/experience`;
         text-transform: uppercase;
     }
 
-    .site-navigation :global(a)::after {
+    .site-navigation > :global(a)::after {
         content: "";
         position: absolute;
         right: 0;
@@ -216,11 +241,22 @@ const isExperience = Astro.url.pathname === `/${lang}/experience`;
         transition: transform 260ms ease;
     }
 
-    .site-navigation :global(a:hover)::after,
-    .site-navigation :global(a:focus-visible)::after,
-    .site-navigation :global(a[aria-current="page"])::after {
+    .site-navigation > :global(a:hover)::after,
+    .site-navigation > :global(a:focus-visible)::after,
+    .site-navigation > :global(a[aria-current="page"])::after {
         transform: scaleX(1);
         transform-origin: left;
+    }
+
+    /* Directional arrows nudge on hover. */
+    .site-navigation > :global(a > span[aria-hidden="true"]) {
+        display: inline-block;
+        transition: transform 300ms var(--ease-cinematic);
+    }
+
+    .site-navigation > :global(a:hover > span[aria-hidden="true"]),
+    .site-navigation > :global(a:focus-visible > span[aria-hidden="true"]) {
+        transform: translate(0.16rem, -0.16rem);
     }
 
     .menu-toggle {
@@ -233,7 +269,7 @@ const isExperience = Astro.url.pathname === `/${lang}/experience`;
         color: inherit;
     }
 
-    .menu-toggle span:not(.sr-only) {
+    .menu-toggle span {
         display: block;
         width: 100%;
         height: 1px;
@@ -276,27 +312,28 @@ const isExperience = Astro.url.pathname === `/${lang}/experience`;
             justify-content: flex-end;
             gap: 0;
             padding: 7rem 1.25rem 2rem;
-            background: #d2ff3f;
-            color: #0a0a09;
+            background: var(--accent);
+            color: var(--ink);
             visibility: hidden;
             opacity: 0;
             transform: translateY(-1rem);
-            transition: opacity 260ms ease, transform 360ms cubic-bezier(0.16, 1, 0.3, 1), visibility 260ms;
+            transition: opacity 260ms ease, transform 360ms var(--ease-cinematic), visibility 260ms;
         }
 
-        .site-navigation :global(a) {
+        .site-navigation > :global(a) {
             width: 100%;
             min-height: auto;
             padding: 0.42rem 0;
             border-bottom: 1px solid rgba(10, 10, 9, 0.28);
+            font-family: var(--font-display);
             font-size: clamp(2.8rem, 14vw, 5.3rem);
             font-weight: 580;
-            line-height: 0.95;
-            letter-spacing: -0.065em;
+            line-height: 1;
+            letter-spacing: -0.04em;
             text-transform: none;
         }
 
-        .site-navigation :global(a)::after {
+        .site-navigation > :global(a)::after {
             display: none;
         }
 
@@ -307,18 +344,18 @@ const isExperience = Astro.url.pathname === `/${lang}/experience`;
         }
 
         .site-header[data-menu-open] {
-            color: #0a0a09;
+            color: var(--ink);
         }
 
         .site-header[data-menu-open] .menu-toggle {
-            color: #0a0a09;
+            color: var(--ink);
         }
 
-        .site-header[data-menu-open] .menu-toggle span:not(.sr-only):first-of-type {
+        .site-header[data-menu-open] .menu-toggle span:first-of-type {
             transform: translateY(0.3rem) rotate(45deg);
         }
 
-        .site-header[data-menu-open] .menu-toggle span:not(.sr-only):last-of-type {
+        .site-header[data-menu-open] .menu-toggle span:last-of-type {
             transform: translateY(-0.3rem) rotate(-45deg);
         }
     }

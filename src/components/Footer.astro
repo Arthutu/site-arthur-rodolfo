@@ -1,20 +1,15 @@
 ---
-import { getLangFromUrl, useTranslations } from "../i18n/utils";
+import { t } from "../lib/strings";
 
-const lang = getLangFromUrl(Astro.url);
-const t = useTranslations(lang);
 const currentYear = new Date().getFullYear();
 ---
 
 <footer class="site-footer">
-    <a class="site-footer__mark" href={`/${lang}`} aria-label="Arthur Rodolfo — Home">AR</a>
+    <a class="site-footer__mark" href="/" aria-label={t("nav.homeLabel")}>AR</a>
 
-    <nav aria-label="Footer navigation">
-        <a href={`/${lang}/about`}>{t("nav.about")}</a>
-        <a href={`/${lang}/experience`}>{t("nav.experience")}</a>
-        <a href="/arthur-rodolfo-resume.pdf" target="_blank" rel="noopener noreferrer">
-            {t("nav.resume")} <span aria-hidden="true">↗</span>
-        </a>
+    <nav aria-label={t("nav.footer")}>
+        <a href="/about">{t("nav.about")}</a>
+        <a href="/experience">{t("nav.experience")}</a>
         <a href="mailto:arthurrodolfo81@gmail.com">
             {t("nav.contact")} <span aria-hidden="true">↗</span>
         </a>
@@ -31,8 +26,8 @@ const currentYear = new Date().getFullYear();
         gap: 2rem;
         padding: 2.5rem clamp(1.25rem, 4vw, 4rem);
         border-top: 1px solid rgba(240, 238, 232, 0.16);
-        background: #0a0a09;
-        color: #f0eee8;
+        background: var(--ink);
+        color: var(--paper);
     }
 
     .site-footer__mark {
@@ -67,7 +62,7 @@ const currentYear = new Date().getFullYear();
     p {
         justify-self: end;
         margin: 0;
-        color: #aaa79f;
+        color: var(--muted);
         font-size: 0.7rem;
         letter-spacing: 0.06em;
         text-transform: uppercase;

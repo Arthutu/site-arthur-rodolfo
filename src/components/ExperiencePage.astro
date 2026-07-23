@@ -1,15 +1,8 @@
 ---
 import EditorialContact from "./EditorialContact.astro";
 import CinematicPageHero from "./CinematicPageHero.astro";
-import experienceHero from "../assets/arthur-experience-hero.png";
-
-type Language = "en" | "ptBR" | "fr" | "es";
-
-interface Props {
-    lang: Language;
-}
-
-const { lang } = Astro.props;
+import experienceHero from "../assets/arthur-experience-hero.webp";
+import { t } from "../lib/strings";
 
 const shared = {
     companies: [
@@ -22,128 +15,100 @@ const shared = {
     ],
 };
 
-const copy = {
-    en: {
-        page: "Experience",
-        title: "A career built by widening the scope.",
-        intro: "From industrial software in Brazil to product platforms in Canada, each chapter added a new dimension: systems, customers, ownership, and cross-functional leadership.",
-        chapter: "01 / The work",
-        present: "Present",
-        resume: "View the complete résumé",
-        roles: [
-            { role: "Software Engineer", description: "Build event-driven platform capabilities that keep core business data consistent across Clio products. Partner with Product, Design, and engineering teams across Data Ubiquity to improve interoperability, reliability, and the developer experience." },
-            { role: "Software Engineer", description: "Owned customer-facing capabilities from discovery through production across onboarding, configurable forms, workflow automation, and partner distribution. Worked across product, design, backend, frontend, and cloud infrastructure in a fast-moving startup environment." },
-            { role: "Software Engineer", description: "Built an internal platform for monitoring financial transactions and improving operational traceability. Led a stakeholder-driven experience redesign and implemented reliable event-driven communication with AWS messaging services." },
-            { role: "Software Engineer", description: "Delivered full-stack capabilities for a white-label commerce platform serving a major Brazilian wholesale business. Contributed across product delivery, frontend architecture, backend services, and team code quality." },
-            { role: "Software Engineer", description: "Maintained and evolved production traceability software supporting critical manufacturing operations. Worked directly with on-site teams to design features, validate behavior at industrial scale, and keep the system reliable." },
-            { role: "Software Engineering Intern", description: "Started my software career owning practical internal applications from implementation through testing, deployment, and maintenance in a production manufacturing environment." },
-        ],
-    },
-    ptBR: {
-        page: "Experiência",
-        title: "Uma carreira construída ampliando o escopo.",
-        intro: "De software industrial no Brasil a plataformas de produto no Canadá, cada capítulo adicionou uma nova dimensão: sistemas, clientes, ownership e liderança multifuncional.",
-        chapter: "01 / O trabalho",
-        present: "Presente",
-        resume: "Ver o currículo completo",
-        roles: [
-            { role: "Engenheiro de Software", description: "Construo capacidades de plataforma orientadas a eventos que mantêm dados essenciais consistentes entre os produtos da Clio. Colaboro com Produto, Design e times de engenharia em Data Ubiquity para melhorar interoperabilidade, confiabilidade e experiência do desenvolvedor." },
-            { role: "Engenheiro de Software", description: "Liderei capacidades voltadas ao cliente da descoberta à produção em onboarding, formulários configuráveis, automação de workflows e distribuição por parceiros. Atuei entre produto, design, backend, frontend e infraestrutura cloud em um ambiente de startup." },
-            { role: "Engenheiro de Software", description: "Construí uma plataforma interna para monitorar transações financeiras e melhorar a rastreabilidade operacional. Liderei uma reformulação de experiência com stakeholders e implementei comunicação confiável orientada a eventos com serviços de mensageria da AWS." },
-            { role: "Engenheiro de Software", description: "Entreguei capacidades full-stack para uma plataforma de e-commerce white-label de uma grande empresa atacadista brasileira. Contribuí em entrega de produto, arquitetura frontend, serviços backend e qualidade de código do time." },
-            { role: "Engenheiro de Software", description: "Mantive e evoluí software de rastreabilidade que suportava operações críticas de manufatura. Trabalhei diretamente com equipes da planta para desenhar funcionalidades, validar comportamento em escala industrial e manter o sistema confiável." },
-            { role: "Estagiário em Engenharia de Software", description: "Iniciei minha carreira em software assumindo aplicações internas da implementação aos testes, deploy e manutenção em um ambiente de produção industrial." },
-        ],
-    },
-    fr: {
-        page: "Expérience",
-        title: "Une carrière construite en élargissant le champ d’action.",
-        intro: "Du logiciel industriel au Brésil aux plateformes produit au Canada, chaque étape a ajouté une dimension : systèmes, clients, responsabilité et leadership pluridisciplinaire.",
-        chapter: "01 / Le travail",
-        present: "Présent",
-        resume: "Voir le CV complet",
-        roles: [
-            { role: "Ingénieur logiciel", description: "Je construis des capacités de plateforme événementielles qui maintiennent la cohérence des données essentielles entre les produits Clio. Je collabore avec Produit, Design et les équipes d’ingénierie de Data Ubiquity pour améliorer interopérabilité, fiabilité et expérience développeur." },
-            { role: "Ingénieur logiciel", description: "J’ai porté des capacités client de la découverte à la production : onboarding, formulaires configurables, automatisation des workflows et distribution par partenaires. J’ai travaillé entre produit, design, backend, frontend et infrastructure cloud dans un environnement startup." },
-            { role: "Ingénieur logiciel", description: "J’ai construit une plateforme interne de suivi des transactions financières et d’amélioration de la traçabilité opérationnelle. J’ai dirigé une refonte de l’expérience avec les parties prenantes et mis en place une communication événementielle fiable avec AWS." },
-            { role: "Ingénieur logiciel", description: "J’ai livré des capacités full-stack pour une plateforme e-commerce white-label destinée à un grand grossiste brésilien. J’ai contribué à la livraison produit, l’architecture frontend, les services backend et la qualité du code de l’équipe." },
-            { role: "Ingénieur logiciel", description: "J’ai maintenu et fait évoluer un logiciel de traçabilité soutenant des opérations industrielles critiques. J’ai travaillé directement avec les équipes du site pour concevoir des fonctionnalités, les valider à l’échelle industrielle et préserver la fiabilité du système." },
-            { role: "Stagiaire en ingénierie logicielle", description: "J’ai commencé ma carrière en prenant en charge des applications internes, de l’implémentation aux tests, au déploiement et à la maintenance dans un environnement industriel." },
-        ],
-    },
-    es: {
-        page: "Experiencia",
-        title: "Una carrera construida ampliando el alcance.",
-        intro: "Desde software industrial en Brasil hasta plataformas de producto en Canadá, cada etapa sumó una dimensión: sistemas, clientes, responsabilidad y liderazgo interdisciplinario.",
-        chapter: "01 / El trabajo",
-        present: "Presente",
-        resume: "Ver el currículum completo",
-        roles: [
-            { role: "Ingeniero de Software", description: "Construyo capacidades de plataforma orientadas a eventos que mantienen datos esenciales consistentes entre los productos de Clio. Colaboro con Producto, Diseño y equipos de ingeniería de Data Ubiquity para mejorar interoperabilidad, confiabilidad y experiencia del desarrollador." },
-            { role: "Ingeniero de Software", description: "Lideré capacidades para clientes desde el descubrimiento hasta producción en onboarding, formularios configurables, automatización de flujos y distribución por socios. Trabajé entre producto, diseño, backend, frontend e infraestructura cloud en una startup." },
-            { role: "Ingeniero de Software", description: "Construí una plataforma interna para monitorear transacciones financieras y mejorar la trazabilidad operativa. Lideré un rediseño de experiencia con stakeholders e implementé comunicación confiable orientada a eventos con mensajería de AWS." },
-            { role: "Ingeniero de Software", description: "Entregué capacidades full-stack para una plataforma de comercio white-label de una importante empresa mayorista brasileña. Contribuí a la entrega de producto, arquitectura frontend, servicios backend y calidad de código del equipo." },
-            { role: "Ingeniero de Software", description: "Mantuve y evolucioné software de trazabilidad que apoyaba operaciones críticas de manufactura. Trabajé directamente con equipos de planta para diseñar funcionalidades, validarlas a escala industrial y mantener la confiabilidad del sistema." },
-            { role: "Becario de Ingeniería de Software", description: "Comencé mi carrera haciéndome responsable de aplicaciones internas desde la implementación hasta pruebas, despliegue y mantenimiento en un entorno industrial." },
-        ],
-    },
+const c = {
+    page: "Experience",
+    title: "Every job got bigger than the last.",
+    intro: "Industrial software in Brazil, then consulting, fintech, a Canadian startup, and now platform work at Clio. Each move traded comfort for scope.",
+    present: "Present",
+    roles: [
+        { role: "Software Engineer", description: "Build event-driven platform services that keep core business data consistent across Clio products. Partner with Product, Design, and engineering teams in the data platform group to improve interoperability, reliability, and the developer experience." },
+        { role: "Software Engineer", description: "Owned customer-facing features from discovery through production across onboarding, configurable forms, workflow automation, and partner distribution. Worked across product, design, backend, frontend, and cloud infrastructure." },
+        { role: "Software Engineer", description: "Built an internal platform for monitoring financial transactions and improving operational traceability. Redesigned the operators’ workflow with the people who used it daily, and implemented reliable event-driven communication with AWS messaging services." },
+        { role: "Software Engineer", description: "Delivered full-stack features for a white-label commerce platform serving a major Brazilian wholesale business. Contributed across product delivery, frontend architecture, backend services, and team code quality." },
+        { role: "Software Engineer", description: "Maintained and evolved production traceability software supporting critical manufacturing operations. Worked directly with on-site teams to design features, validate behavior at industrial scale, and keep the system reliable." },
+        { role: "Software Engineering Intern", description: "Started my software career owning practical internal applications from implementation through testing, deployment, and maintenance in a production manufacturing environment." },
+    ],
 } as const;
 
-const c = copy[lang];
-const enterLabels = { en: "Enter", ptBR: "Entrar", fr: "Entrer", es: "Entrar" } as const;
-const monthFormatter = new Intl.DateTimeFormat(lang === "ptBR" ? "pt-BR" : lang, { month: "short", year: "numeric", timeZone: "UTC" });
+const monthFormatter = new Intl.DateTimeFormat("en", { month: "short", year: "numeric", timeZone: "UTC" });
 const formatDate = (date: string) => monthFormatter.format(new Date(`${date}-01T00:00:00Z`)).replace(" de ", " ");
 const experiences = shared.companies.map((company, index) => ({ ...company, ...c.roles[index] }));
 ---
 
 <div class="experience-page-shell" data-inner-page>
-    <CinematicPageHero page={c.page} statement={c.title} intro={c.intro} enterLabel={enterLabels[lang]} image={experienceHero} imagePosition="50% 43%" />
+    <CinematicPageHero page={c.page} statement={c.title} intro={c.intro} image={experienceHero} imagePosition="50% 43%" />
 
     <main id="main-content" class="experience-page">
-    <section class="experience-list" aria-labelledby="experience-list-title" data-header-theme="light" data-reveal>
-        <div class="page-label"><span>{c.chapter}</span><span aria-hidden="true">AR / 02</span></div>
+    <section class="experience-list" aria-labelledby="experience-list-title" data-header-theme="light">
         <h2 id="experience-list-title" class="sr-only">{c.page}</h2>
 
-        <ol>
+        <div class="timeline">
+            <span class="timeline-track" aria-hidden="true"></span>
+            <span class="timeline-fill" aria-hidden="true" data-timeline-fill></span>
+            <ol>
             {experiences.map((experience, index) => (
-                <li>
+                <li data-reveal data-role>
+                    <span class="timeline-node" aria-hidden="true"></span>
                     <article>
                         <div class="experience-index">0{index + 1}</div>
                         <div class="experience-time">
                             <time datetime={experience.start}>{formatDate(experience.start)}</time>
+                            {/* A hidden dash read as nothing, so ranges announced
+                                as "Jul 2025 Present" with no relation between them. */}
                             <span aria-hidden="true">—</span>
+                            <span class="sr-only">{t("a11y.dateTo")}</span>
                             {experience.end ? <time datetime={experience.end}>{formatDate(experience.end)}</time> : <span>{c.present}</span>}
                         </div>
                         <div class="experience-content">
                             <h3>{experience.role}</h3>
                             <a href={experience.url} target="_blank" rel="noopener noreferrer">{experience.company}<span aria-hidden="true">↗</span></a>
                             <p>{experience.description}</p>
-                            <ul aria-label={`${experience.company} capabilities`}>
+                            <ul aria-label={`${experience.company} — ${t("a11y.capabilities")}`}>
                                 {experience.skills.map((skill) => <li>{skill}</li>)}
                             </ul>
                         </div>
                     </article>
                 </li>
             ))}
-        </ol>
+            </ol>
+        </div>
 
-        <a class="resume-link" href="/arthur-rodolfo-resume.pdf" target="_blank" rel="noopener noreferrer">{c.resume}<span aria-hidden="true">↗</span></a>
     </section>
 
-    <EditorialContact lang={lang} />
+    <EditorialContact />
     </main>
 </div>
+
+<script>
+    import { onScroll } from "../scripts/scroll";
+
+    // Grow the career progress line as the reading position descends the list.
+    const timeline = document.querySelector<HTMLElement>(".timeline");
+    const fill = timeline?.querySelector<HTMLElement>("[data-timeline-fill]");
+
+    if (timeline && fill) {
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            // Still show the completed line — it carries meaning — just don't
+            // drive it from scroll.
+            timeline.style.setProperty("--timeline-progress", "1");
+        } else {
+            onScroll(() => {
+                const rect = timeline.getBoundingClientRect();
+                const readingLine = window.innerHeight * 0.55;
+                const progress = Math.max(0, Math.min(1, (readingLine - rect.top) / rect.height));
+                timeline.style.setProperty("--timeline-progress", progress.toFixed(4));
+            }, timeline);
+        }
+    }
+</script>
 
 <style>
     .experience-page-shell {
         overflow: clip;
-        background: #0a0a09;
+        background: var(--ink);
     }
 
     .experience-page {
-        --ink: #0a0a09;
-        --paper: #f0eee8;
-        --muted: #aaa79f;
         background: var(--ink);
         color: var(--paper);
     }
@@ -151,7 +116,7 @@ const experiences = shared.companies.map((company, index) => ({ ...company, ...c
     .experience-page-shell[data-motion="ready"] [data-reveal] {
         opacity: 0.48;
         transform: translateY(2rem);
-        transition: opacity 800ms ease, transform 950ms cubic-bezier(0.16, 1, 0.3, 1);
+        transition: opacity 800ms ease, transform 950ms var(--ease-cinematic);
     }
 
     .experience-page-shell[data-motion="ready"] [data-reveal][data-visible="true"] {
@@ -159,8 +124,54 @@ const experiences = shared.companies.map((company, index) => ({ ...company, ...c
         transform: translateY(0);
     }
 
+    /* Each role stays dim until it reaches the reading position. */
+    .experience-page-shell[data-motion="ready"] li[data-role] {
+        opacity: 0.32;
+        transform: translateY(2.5rem);
+        transition: opacity 900ms ease, transform 1000ms var(--ease-cinematic);
+    }
+
+    .experience-page-shell[data-motion="ready"] li[data-role][data-visible="true"] {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Company, dates and description enter in a controlled sequence. */
+    .experience-page-shell[data-motion="ready"] li[data-role] .experience-index,
+    .experience-page-shell[data-motion="ready"] li[data-role] .experience-time,
+    .experience-page-shell[data-motion="ready"] li[data-role] .experience-content h3,
+    .experience-page-shell[data-motion="ready"] li[data-role] .experience-content > a,
+    .experience-page-shell[data-motion="ready"] li[data-role] .experience-content > p,
+    .experience-page-shell[data-motion="ready"] li[data-role] .experience-content ul {
+        opacity: 0;
+        transform: translateY(1.15rem);
+        transition:
+            opacity 700ms ease,
+            transform 850ms var(--ease-cinematic);
+    }
+
+    .experience-page-shell[data-motion="ready"] li[data-role][data-visible="true"] :is(
+        .experience-index,
+        .experience-time,
+        .experience-content h3,
+        .experience-content > a,
+        .experience-content > p,
+        .experience-content ul
+    ) {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .experience-page-shell[data-motion="ready"] li[data-role] .experience-time { transition-delay: 70ms; }
+    .experience-page-shell[data-motion="ready"] li[data-role] .experience-content h3 { transition-delay: 130ms; }
+    .experience-page-shell[data-motion="ready"] li[data-role] .experience-content > a { transition-delay: 210ms; }
+    .experience-page-shell[data-motion="ready"] li[data-role] .experience-content > p { transition-delay: 290ms; }
+    .experience-page-shell[data-motion="ready"] li[data-role] .experience-content ul { transition-delay: 370ms; }
+
     .experience-list {
-        padding: clamp(7rem, 13vw, 13rem) clamp(1.25rem, 5vw, 5.5rem);
+        /* Smaller top now that the "01 / The work" label is gone; the roomy
+           bottom stays so the list breathes before the contact section. */
+        padding: clamp(2.5rem, 5vw, 4rem) clamp(1.25rem, 5vw, 5.5rem) clamp(6rem, 11vw, 11rem);
     }
 
     .page-label {
@@ -172,7 +183,6 @@ const experiences = shared.companies.map((company, index) => ({ ...company, ...c
         font-size: 0.68rem;
         letter-spacing: 0.2em;
         text-transform: uppercase;
-        opacity: 0.75;
     }
 
     .experience-list {
@@ -184,15 +194,65 @@ const experiences = shared.companies.map((company, index) => ({ ...company, ...c
         color: #66645f;
     }
 
-    .experience-list > ol {
-        margin: clamp(4rem, 8vw, 8rem) 0 0;
-        padding: 0;
-        border-top: 1px solid rgba(10, 10, 9, 0.2);
+    .timeline {
+        --gutter: clamp(1.75rem, 4vw, 3rem);
+        --rail: calc(var(--gutter) * 0.45);
+        position: relative;
+        margin: clamp(1rem, 2vw, 1.75rem) 0 0;
+    }
+
+    /* Persistent progress line connecting the career chapters. */
+    .timeline-track,
+    .timeline-fill {
+        position: absolute;
+        top: 0;
+        left: var(--rail);
+        width: 1px;
+    }
+
+    .timeline-track {
+        bottom: 0;
+        background: rgba(10, 10, 9, 0.18);
+    }
+
+    .timeline-fill {
+        height: 100%;
+        background: var(--accent);
+        transform-origin: top;
+        transform: scaleY(var(--timeline-progress, 0));
+    }
+
+    .timeline > ol {
+        margin: 0;
+        padding: 0 0 0 var(--gutter);
         list-style: none;
     }
 
-    .experience-list > ol > li {
+    .timeline > ol > li {
+        position: relative;
         border-bottom: 1px solid rgba(10, 10, 9, 0.2);
+    }
+
+    .timeline-node {
+        position: absolute;
+        top: calc(clamp(2.5rem, 5vw, 5rem) + 0.15rem);
+        left: calc(var(--rail) - var(--gutter) - 0.31rem);
+        width: 0.62rem;
+        height: 0.62rem;
+        border-radius: 50%;
+        border: 1px solid rgba(10, 10, 9, 0.3);
+        background: #d8d5cd;
+        transform: scale(0.72);
+        transition:
+            transform 550ms var(--ease-cinematic),
+            background 550ms ease,
+            box-shadow 550ms ease;
+    }
+
+    .timeline > ol > li[data-visible="true"] .timeline-node {
+        background: var(--accent);
+        box-shadow: 0 0 0 5px rgba(210, 255, 63, 0.16);
+        transform: scale(1);
     }
 
     article {
@@ -217,10 +277,11 @@ const experiences = shared.companies.map((company, index) => ({ ...company, ...c
 
     .experience-content h3 {
         margin: 0;
+        font-family: var(--font-display);
         font-size: clamp(2.4rem, 5.3vw, 6rem);
         font-weight: 560;
-        line-height: 0.86;
-        letter-spacing: -0.065em;
+        line-height: 0.92;
+        letter-spacing: -0.04em;
     }
 
     .experience-content > a {
@@ -234,6 +295,13 @@ const experiences = shared.companies.map((company, index) => ({ ...company, ...c
         font-weight: 650;
         text-decoration-thickness: 1px;
         text-underline-offset: 0.25em;
+        transition: text-underline-offset 250ms var(--ease-cinematic);
+    }
+
+    .experience-content > a:hover,
+    .experience-content > a:focus-visible {
+        text-underline-offset: 0.38em;
+        text-decoration: underline;
     }
 
     .experience-content > p {
@@ -261,22 +329,7 @@ const experiences = shared.companies.map((company, index) => ({ ...company, ...c
         letter-spacing: 0.03em;
     }
 
-    .resume-link {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 4rem;
-        padding: 1.25rem 0;
-        border-block: 1px solid rgba(10, 10, 9, 0.28);
-        color: inherit;
-        font-size: clamp(1.15rem, 1.8vw, 1.5rem);
-        text-decoration: none;
-    }
 
-    .resume-link:hover,
-    .resume-link:focus-visible {
-        padding-inline: 0.75rem;
-        background: #d2ff3f;
-    }
 
     @media (max-width: 760px) {
         article {
