@@ -1,12 +1,370 @@
 ---
-import SocialMedia from "../Header/SocialMedia.astro";
-import Nav from "./Nav.astro";
-import SettingsMenu from "../Header/SettingsMenu.astro";
+import { getCleanPath } from "../../lib/path";
+import { t } from "../../lib/strings";
+import SiteMark from "./SiteMark.astro";
+
+const path = getCleanPath(Astro.url);
+const isHome = path === "/";
+const isAbout = path === "/about";
+const isExperience = path === "/experience";
 ---
 
-<header
-    class="sticky top-0 z-50 flex items-center justify-between border-b border-neutral-200 bg-neutral-50 p-2 dark:border-neutral-800 dark:bg-neutral-950 md:px-6 lg:px-6 backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90">
-    <SocialMedia />
-    <Nav />
-    <SettingsMenu />
+<header class:list={["site-header", { "site-header-home": isHome }]}>
+    <a class="site-mark" href="/" aria-label={t("nav.homeLabel")} data-magnetic="0.2">
+        <SiteMark />
+        <span class="site-mark-full">Arthur Rodolfo</span>
+    </a>
+
+    <button
+        class="menu-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="site-navigation"
+        aria-label={t("nav.menu")}
+        data-open-label={t("nav.closeMenu")}
+        data-closed-label={t("nav.menu")}>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+    </button>
+
+    <nav id="site-navigation" class="site-navigation" aria-label={t("nav.primary")}>
+        <a href="/about" aria-current={isAbout ? "page" : undefined}>{t("nav.about")}</a>
+        <a href="/experience" aria-current={isExperience ? "page" : undefined}>{t("nav.experience")}</a>
+        <a href="mailto:arthurrodolfo81@gmail.com">{t("nav.contact")} <span aria-hidden="true">↗</span></a>
+    </nav>
 </header>
+
+
+<script>
+    const header = document.querySelector<HTMLElement>(".site-header");
+    const toggle = header?.querySelector<HTMLButtonElement>(".menu-toggle");
+    const navigation = header?.querySelector<HTMLElement>(".site-navigation");
+    const siteMark = header?.querySelector<HTMLElement>(".site-mark");
+    // The hero sits outside <main> on every page type, and the footer is
+    // outside it too — inerting only #main-content left both reachable to a
+    // screen reader's virtual cursor while the menu was open.
+    const behindMenu = Array.from(
+        document.querySelectorAll<HTMLElement>("#main-content, .site-body > footer, [data-hero], [data-inner-hero]")
+    );
+    let restoreFocus: HTMLElement | null = null;
+
+    const getFocusable = () => navigation
+        ? Array.from(navigation.querySelectorAll<HTMLElement>('a[href], select, button:not([disabled]), [tabindex]:not([tabindex="-1"])'))
+        : [];
+
+    const setOpen = (open: boolean, moveFocus = false) => {
+        if (!header || !toggle || !navigation) return;
+        header.toggleAttribute("data-menu-open", open);
+        toggle.setAttribute("aria-expanded", String(open));
+        toggle.setAttribute("aria-label", open ? toggle.dataset.openLabel ?? "Close menu" : toggle.dataset.closedLabel ?? "Open menu");
+        document.body.style.overflow = open ? "hidden" : "";
+        behindMenu.forEach((region) => region.toggleAttribute("inert", open));
+
+        // Inertia scrolling must pause while the menu owns the screen.
+        if (open) window.__arLenis?.stop();
+        else window.__arLenis?.start();
+
+        if (open) {
+            restoreFocus = document.activeElement instanceof HTMLElement ? document.activeElement : toggle;
+            if (moveFocus) window.setTimeout(() => getFocusable()[0]?.focus(), 0);
+        } else if (moveFocus) {
+            restoreFocus?.focus();
+        }
+    };
+
+    toggle?.addEventListener("click", () => {
+        setOpen(toggle.getAttribute("aria-expanded") !== "true", true);
+    });
+
+    navigation?.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => setOpen(false));
+    });
+
+    window.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && toggle?.getAttribute("aria-expanded") === "true") {
+            setOpen(false, true);
+            return;
+        }
+
+        if (event.key !== "Tab" || toggle?.getAttribute("aria-expanded") !== "true") return;
+        // The site mark stays visible above the menu overlay, so it has to be
+        // inside the trap — it was clickable but keyboard-unreachable.
+        const focusable = [siteMark, toggle, ...getFocusable()].filter(Boolean) as HTMLElement[];
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last?.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first?.focus();
+        }
+    });
+
+    const desktopQuery = window.matchMedia("(min-width: 761px)");
+    desktopQuery.addEventListener("change", (event) => {
+        if (event.matches) setOpen(false);
+    });
+
+    const themedSections = Array.from(document.querySelectorAll<HTMLElement>("[data-header-theme]"));
+    if (themedSections.length && header) {
+        let ticking = false;
+
+        const updateHeaderTone = () => {
+            const sampleLine = 36;
+            // Chapters deliberately overlap via negative margins, and the LATER
+            // section paints on top. Taking the first match would read the
+            // section underneath and leave light text on the ivory chapters.
+            let current: HTMLElement | undefined;
+            for (let i = themedSections.length - 1; i >= 0; i -= 1) {
+                const rect = themedSections[i].getBoundingClientRect();
+                if (rect.top <= sampleLine && rect.bottom > sampleLine) {
+                    current = themedSections[i];
+                    break;
+                }
+            }
+            header.dataset.tone = current?.dataset.headerTheme ?? "dark";
+            ticking = false;
+        };
+
+        const requestToneUpdate = () => {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(updateHeaderTone);
+        };
+
+        window.addEventListener("scroll", requestToneUpdate, { passive: true });
+        window.addEventListener("resize", requestToneUpdate, { passive: true });
+        updateHeaderTone();
+    }
+</script>
+
+<style>
+    .site-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 80;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 4.5rem;
+        padding: 0 clamp(1.25rem, 3vw, 3rem);
+        border-bottom: 1px solid rgba(240, 238, 232, 0.16);
+        background: rgba(10, 10, 9, 0.82);
+        color: var(--paper);
+        backdrop-filter: blur(18px);
+    }
+
+    .site-header-home {
+        background: linear-gradient(to bottom, rgba(10, 10, 9, 0.64), transparent);
+        border-color: transparent;
+        backdrop-filter: none;
+    }
+
+    .site-header[data-tone="light"] {
+        color: var(--ink);
+        border-color: rgba(10, 10, 9, 0.18);
+        background: rgba(240, 238, 232, 0.78);
+        backdrop-filter: blur(18px);
+    }
+
+    /* The AR / monogram. Outlined paths, so it never waits on the webfont;
+       the letters take currentColor and follow the header tone. */
+    .site-mark :global(.site-mark-svg) {
+        height: 0.92rem;
+        width: auto;
+        overflow: visible;
+    }
+
+    .site-mark :global(.site-mark-slash) {
+        fill: var(--accent);
+    }
+
+    .site-mark {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        min-height: 2.75rem;
+        color: inherit;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        text-decoration: none;
+        text-transform: uppercase;
+    }
+
+
+    .site-mark-full {
+        opacity: 0;
+        transform: translateX(-0.4rem);
+        transition: opacity 220ms ease, transform 220ms ease;
+    }
+
+    .site-mark:hover .site-mark-full,
+    .site-mark:focus-visible .site-mark-full {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .site-navigation {
+        display: flex;
+        align-items: center;
+        gap: clamp(1rem, 2.5vw, 2.5rem);
+    }
+
+    .site-navigation > :global(a) {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        min-height: 2.75rem;
+        gap: 0.25rem;
+        color: inherit;
+        font-size: 0.75rem;
+        letter-spacing: 0.12em;
+        text-decoration: none;
+        text-transform: uppercase;
+    }
+
+    .site-navigation > :global(a)::after {
+        content: "";
+        position: absolute;
+        right: 0;
+        bottom: 0.45rem;
+        left: 0;
+        height: 1px;
+        background: currentColor;
+        transform: scaleX(0);
+        transform-origin: right;
+        transition: transform 260ms ease;
+    }
+
+    .site-navigation > :global(a:hover)::after,
+    .site-navigation > :global(a:focus-visible)::after,
+    .site-navigation > :global(a[aria-current="page"])::after {
+        transform: scaleX(1);
+        transform-origin: left;
+    }
+
+    /* Directional arrows nudge on hover. */
+    .site-navigation > :global(a > span[aria-hidden="true"]) {
+        display: inline-block;
+        transition: transform 300ms var(--ease-cinematic);
+    }
+
+    .site-navigation > :global(a:hover > span[aria-hidden="true"]),
+    .site-navigation > :global(a:focus-visible > span[aria-hidden="true"]) {
+        transform: translate(0.16rem, -0.16rem);
+    }
+
+    .menu-toggle {
+        display: none;
+        width: 2.75rem;
+        height: 2.75rem;
+        padding: 0.8rem;
+        border: 0;
+        background: transparent;
+        color: inherit;
+    }
+
+    .menu-toggle span {
+        display: block;
+        width: 100%;
+        height: 1px;
+        margin: 0.3rem 0;
+        background: currentColor;
+        transition: transform 240ms ease;
+    }
+
+    @media (max-width: 760px) {
+        .site-header {
+            min-height: 4rem;
+            backdrop-filter: none;
+        }
+
+        .site-header[data-tone="light"] {
+            backdrop-filter: none;
+        }
+
+        .site-mark {
+            position: relative;
+            z-index: 2;
+        }
+
+        .site-mark-full {
+            display: none;
+        }
+
+        .menu-toggle {
+            display: block;
+            position: relative;
+            z-index: 2;
+        }
+
+        .site-navigation {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-end;
+            gap: 0;
+            padding: 7rem 1.25rem 2rem;
+            background: var(--accent);
+            color: var(--ink);
+            visibility: hidden;
+            opacity: 0;
+            transform: translateY(-1rem);
+            transition: opacity 260ms ease, transform 360ms var(--ease-cinematic), visibility 260ms;
+        }
+
+        .site-navigation > :global(a) {
+            width: 100%;
+            min-height: auto;
+            padding: 0.42rem 0;
+            border-bottom: 1px solid rgba(10, 10, 9, 0.28);
+            font-family: var(--font-display);
+            font-size: clamp(2.8rem, 14vw, 5.3rem);
+            font-weight: 580;
+            line-height: 1;
+            letter-spacing: -0.04em;
+            text-transform: none;
+        }
+
+        .site-navigation > :global(a)::after {
+            display: none;
+        }
+
+        .site-header[data-menu-open] .site-navigation {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .site-header[data-menu-open] {
+            color: var(--ink);
+        }
+
+        .site-header[data-menu-open] .menu-toggle {
+            color: var(--ink);
+        }
+
+        .site-header[data-menu-open] .menu-toggle span:first-of-type {
+            transform: translateY(0.3rem) rotate(45deg);
+        }
+
+        .site-header[data-menu-open] .menu-toggle span:last-of-type {
+            transform: translateY(-0.3rem) rotate(-45deg);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .site-mark-full,
+        .site-navigation,
+        .menu-toggle span {
+            transition: none;
+        }
+    }
+</style>

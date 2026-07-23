@@ -1,3 +1,470 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
+/* Self-hosted variable typefaces (Fontshare). Clash Display carries the
+   editorial headlines; Switzer handles everything else. */
+@font-face {
+    font-family: "Clash Display";
+    src: url("/fonts/ClashDisplay-Variable.woff2") format("woff2");
+    font-weight: 200 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/Switzer-Variable.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    color-scheme: dark;
+    --highlight-color: #0a0a09;
+    --highlight-background-color: #d2ff3f;
+    --accent: #d2ff3f;
+    /* Palette — single source of truth, previously re-declared per component */
+    --ink: #0a0a09;
+    --paper: #f0eee8;
+    --muted: #aaa79f;
+    --line: rgba(240, 238, 232, 0.19);
+    /* Shared cinematic motion language */
+    --ease-cinematic: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-mask: cubic-bezier(0.76, 0, 0.16, 1);
+    --ease-emphasized: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-scan: cubic-bezier(0.65, 0, 0.35, 1);
+    --font-display: "Clash Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-body: "Switzer", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: var(--font-body);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    background: #0a0a09;
+    scrollbar-color: #76766e #0a0a09;
+}
+
+/* Lenis owns scrolling; native smooth scrolling would fight it. */
+html.lenis,
+html.lenis body {
+    height: auto;
+}
+
+.lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+    overflow: hidden;
+}
+
+/* Native smooth scrolling only when Lenis is not running. */
+html:not(.lenis) {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+}
+
+button,
+select,
+input,
+textarea {
+    font: inherit;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+    display: block;
+    max-width: 100%;
+}
+
+.site-body {
+    display: flex;
+    min-height: 100svh;
+    flex-direction: column;
+    background: #0a0a09;
+    color: #f0eee8;
+}
+
+.standard-content {
+    width: 100%;
+    max-width: 90rem;
+    flex: 1;
+    margin: 0 auto;
+    padding: 8rem clamp(1.25rem, 5vw, 5rem) 5rem;
+}
+
+.immersive-content {
+    min-height: 100svh;
+}
+
+/* Two-part focus ring: a dark core plus a lime halo. Either half carries the
+   indicator on any surface — the previous lime-only ring measured 1.0:1
+   against the ivory sections and vanished entirely in the lime mobile menu. */
+a:focus-visible,
+button:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 5px var(--accent);
+}
+
+/* On the dark chapters invert the pair so the dark core never disappears. */
+[data-header-theme="dark"] a:focus-visible,
+[data-header-theme="dark"] button:focus-visible,
+.site-header:not([data-tone="light"]) a:focus-visible,
+.site-header:not([data-tone="light"]) button:focus-visible {
+    outline-color: var(--paper);
+}
+
+/* Restrained magnetic movement — the JS only writes the offset vars,
+   the transition here gives the trailing, premium feel. */
+[data-magnetic] {
+    transform: translate3d(var(--magnet-x, 0), var(--magnet-y, 0), 0);
+    transition: transform 320ms var(--ease-cinematic);
+}
+
+/* ------------------------------------------------------------------ */
+/* Custom cursor. Difference blending means one white cursor reads     */
+/* correctly on both the ivory and the near-black chapters.            */
+/* Only activated by JS on fine pointers, so touch and no-JS keep the  */
+/* native cursor untouched.                                            */
+/* ------------------------------------------------------------------ */
+.cursor-layer {
+    display: none;
+}
+
+/* The blend lives on the dot/ring, not the container — blending the full
+   viewport gave the compositor a worst-case read-back region.
+   CRITICAL: this wrapper must NOT create a stacking context. `position`,
+   `z-index` and `opacity < 1` each do, and a stacking context is an isolated
+   blending group — the children would blend against this transparent wrapper
+   instead of the page, rendering as flat ivory and going invisible on every
+   light chapter. Hence static positioning, and `visibility` (not opacity) for
+   the pre-first-move reveal. z-index lives on the children. */
+html.has-custom-cursor .cursor-layer {
+    display: block;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+html.has-custom-cursor .cursor-layer[data-cursor-ready] {
+    visibility: visible;
+}
+
+html.has-custom-cursor,
+html.has-custom-cursor * {
+    cursor: none;
+}
+
+/* Text still needs an I-beam — without it there is no affordance that any of
+   the copy on this text-heavy site is selectable. */
+html.has-custom-cursor :is(p, h1, h2, h3, h4, li, time, blockquote, input, textarea) {
+    cursor: auto;
+}
+
+/* In forced-colors mode the blended cursor is unreliable; hand the system
+   cursor back entirely. */
+@media (forced-colors: active) {
+    html.has-custom-cursor,
+    html.has-custom-cursor * {
+        cursor: auto;
+    }
+
+    .cursor-layer {
+        display: none !important;
+    }
+}
+
+.cursor-dot,
+.cursor-ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 500;
+    border-radius: 50%;
+    will-change: transform;
+}
+
+.cursor-dot {
+    width: 6px;
+    height: 6px;
+    margin: -3px 0 0 -3px;
+    background: var(--paper);
+    mix-blend-mode: difference;
+    transition: opacity 220ms var(--ease-cinematic);
+}
+
+.cursor-ring {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    margin: -21px 0 0 -21px;
+    place-items: center;
+    border: 1px solid rgba(240, 238, 232, 0.62);
+    mix-blend-mode: difference;
+    /* Position and scale kept on separate properties so the per-frame
+       position updates are never slowed by the state transition. */
+    translate: var(--ring-x, 0) var(--ring-y, 0);
+    scale: 1;
+    transition:
+        scale 320ms var(--ease-cinematic),
+        border-color 320ms ease;
+}
+
+/* Sibling of the ring, not a child — otherwise the ring's scale would
+   blow the label up with it. */
+.cursor-label {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 500;
+    translate: var(--ring-x, 0) var(--ring-y, 0);
+    transform: translate(-50%, -50%);
+    mix-blend-mode: difference;
+    color: var(--paper);
+    font-size: 0.58rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 200ms ease;
+}
+
+/* Over something interactive the ring opens up and the dot recedes. */
+.cursor-layer[data-cursor-state="link"] .cursor-ring {
+    scale: 1.55;
+}
+
+.cursor-layer[data-cursor-state="link"] .cursor-dot {
+    opacity: 0;
+}
+
+.cursor-layer[data-cursor-state="label"] .cursor-ring {
+    border-color: rgba(240, 238, 232, 0.9);
+    scale: 2.1;
+}
+
+.cursor-layer[data-cursor-state="label"] .cursor-dot {
+    opacity: 0;
+}
+
+.cursor-layer[data-cursor-state="label"] .cursor-label {
+    opacity: 1;
+    transition-delay: 90ms;
+}
+
+/* ------------------------------------------------------------------ */
+/* Velocity-driven typography — scroll speed leans the big headlines.  */
+/* Only applied to headings with no competing transform.               */
+/* ------------------------------------------------------------------ */
+[data-kinetic] {
+    transform: skewY(var(--scroll-skew, 0deg));
+    will-change: transform;
+}
+
+/* ------------------------------------------------------------------ */
+/* Film grain — the tactile layer that keeps flat black from reading   */
+/* digital. Oversized so the stepped drift never exposes an edge.      */
+/* ------------------------------------------------------------------ */
+/* Viewport-sized, not 220% — the oversized box was a ~57MB pinned texture on
+   a phone. The SVG tile stitches, so shifting background-position gives the
+   same flicker with no extra layer area and no will-change. */
+.film-grain {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.042;
+    pointer-events: none;
+    animation: grain-drift 6s steps(6) infinite;
+}
+
+@keyframes grain-drift {
+    0% { background-position: 0 0; }
+    16% { background-position: -30px 20px; }
+    33% { background-position: 20px -30px; }
+    50% { background-position: -20px -20px; }
+    66% { background-position: 30px 10px; }
+    83% { background-position: -10px 30px; }
+    100% { background-position: 0 0; }
+}
+
+/* Invisible at 0.042 on a small screen, and the most expensive always-on
+   compositing work we do — not worth it on the devices with least headroom. */
+@media (max-width: 760px), (hover: none) {
+    .film-grain {
+        display: none;
+    }
+}
+
+/* ------------------------------------------------------------------ */
+/* Intro sequence — first visit of a session only. The <html> class is */
+/* set by an inline head script so there is never a flash of hero.     */
+/* ------------------------------------------------------------------ */
+.intro-overlay {
+    display: none;
+}
+
+/* Visibility is keyed on the class OR the exit state — otherwise removing
+   `is-loading` to unlock scrolling would snap the overlay to display:none
+   and the exit curtain could never run. */
+html.is-loading .intro-overlay,
+.intro-overlay[data-state="done"] {
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: clamp(1.5rem, 4vw, 3rem);
+    background: #080807;
+    color: var(--paper);
+    transform: translateY(0);
+}
+
+html.is-loading body {
+    overflow: hidden;
+}
+
+.intro-overlay[data-state="done"] {
+    transform: translateY(-100%);
+    transition: transform 1100ms var(--ease-mask);
+    pointer-events: none;
+}
+
+.intro-mark,
+.intro-status {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.intro-count {
+    font-family: var(--font-display);
+    font-size: clamp(5rem, 22vw, 18rem);
+    font-weight: 600;
+    line-height: 0.8;
+    letter-spacing: -0.06em;
+    font-variant-numeric: tabular-nums;
+}
+
+.intro-bar {
+    position: relative;
+    height: 1px;
+    margin-top: 1.25rem;
+    background: rgba(240, 238, 232, 0.22);
+}
+
+.intro-bar::after {
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    content: "";
+    transform: scaleX(var(--intro-progress, 0));
+    transform-origin: left;
+}
+
+::selection {
+    background: var(--highlight-background-color);
+    color: var(--highlight-color);
+}
+
+/* ------------------------------------------------------------------ */
+/* Cross-document page transitions (Home / About / Experience).        */
+/* Native MPA View Transitions — every navigation stays a full page    */
+/* load, so component scroll scripts keep running untouched.           */
+/* ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: no-preference) {
+    @view-transition {
+        navigation: auto;
+    }
+
+    /* Curtain: the outgoing page recedes and darkens while the incoming
+       page wipes up over it. Robust regardless of scroll position. */
+    ::view-transition-old(root) {
+        animation: page-recede 460ms var(--ease-mask) both;
+    }
+
+    ::view-transition-new(root) {
+        animation: page-curtain 680ms var(--ease-mask) both;
+    }
+
+    /* Hero media is only named while it is on screen (see Layout), so this
+       morphs between pages when it makes sense and enters gracefully when not. */
+    ::view-transition-old(page-hero-media) {
+        animation: hero-media-out 360ms var(--ease-cinematic) both;
+    }
+
+    ::view-transition-new(page-hero-media) {
+        animation: hero-media-in 720ms var(--ease-cinematic) both;
+    }
+}
+
+@keyframes page-recede {
+    to {
+        opacity: 0.4;
+        transform: scale(0.985);
+        filter: brightness(0.55);
+    }
+}
+
+@keyframes page-curtain {
+    from {
+        clip-path: inset(100% 0 0 0);
+        transform: translateY(2.5rem);
+    }
+    to {
+        clip-path: inset(0 0 0 0);
+        transform: translateY(0);
+    }
+}
+
+@keyframes hero-media-out {
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes hero-media-in {
+    from {
+        opacity: 0;
+        transform: scale(1.06);
+    }
+}
+
+/* Header stays anchored across navigations instead of cross-fading. */
+.site-header {
+    view-transition-name: site-header;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

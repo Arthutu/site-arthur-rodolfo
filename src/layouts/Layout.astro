@@ -1,44 +1,51 @@
 ---
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header/Header.astro";
-import { getLangFromUrl } from "../i18n/utils";
+import { getCleanPath } from "../lib/path";
+import { t } from "../lib/strings";
 import "../styles/global.css";
 
 interface Props {
     title: string;
     description: string;
+    immersive?: boolean;
 }
 
-const { title, description } = Astro.props;
-const lang = getLangFromUrl(Astro.url);
+const { title, description, immersive = false } = Astro.props;
+const cleanPath = getCleanPath(Astro.url);
+const canonicalUrl = new URL(cleanPath, "https://www.arthurrodolfo.com");
+const socialImage = "https://www.arthurrodolfo.com/social-card.png";
 ---
 
 <!doctype html>
-<html lang={lang}>
+<html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta
-            name="description"
-            property="og:description"
-            content={description}
-        />
+        <meta name="description" content={description} />
 
-        <meta property="og:url" content="https://www.arthurrodolfo.com/" />
+        <meta property="og:url" content={canonicalUrl} />
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="Arthur Rodolfo" />
-        <meta
-            name="og:image"
-            content="https://www.arthurrodolfo.com/arthur.png"
-        />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:locale" content="en_CA" />
+        <meta property="og:site_name" content="Arthur Rodolfo" />
+        <meta property="og:image" content={socialImage} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:alt" content="Arthur Rodolfo — Product Engineer" />
 
-        <meta name="twitter:card" content="summary" />
+        <link rel="canonical" href={canonicalUrl} />
+        <meta name="theme-color" content="#0a0a09" />
+
+        <meta name="twitter:card" content="summary_large_image" />
         <meta property="twitter:domain" content="arthurrodolfo.com" />
-        <meta property="twitter:url" content="https://www.arthurrodolfo.com/" />
+        <meta property="twitter:url" content={canonicalUrl} />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
         <meta
             name="twitter:image"
-            content="https://www.arthurrodolfo.com/arthur.png"
+            content={socialImage}
         />
         <meta name="twitter:site" content="@arthurlrodolfo" />
         <meta name="twitter:creator" content="@arthurlrodolfo" />
@@ -50,70 +57,471 @@ const lang = getLangFromUrl(Astro.url);
         <meta name="robots" content="index, follow" />
 
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+
+        <link
+            rel="preload"
+            href="/fonts/ClashDisplay-Variable.woff2"
+            as="font"
+            type="font/woff2"
+            crossorigin
+        />
+        <link
+            rel="preload"
+            href="/fonts/Switzer-Variable.woff2"
+            as="font"
+            type="font/woff2"
+            crossorigin
+        />
+
         <title>{title}</title>
+
+        <script is:inline>
+            // Decide before first paint whether the intro sequence runs, so the
+            // hero never flashes behind it. First visit of a session only.
+            try {
+                if (
+                    !sessionStorage.getItem("ar-intro-seen") &&
+                    !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+                ) {
+                    document.documentElement.classList.add("is-loading");
+                }
+            } catch {
+                /* storage blocked — skip the intro entirely */
+            }
+
+            // Last-resort recovery, armed unconditionally. The module bundle is
+            // the only thing that normally signals the handoff and it is the one
+            // external chunk, so a repeat visit whose chunk fails to load would
+            // otherwise sit on a permanently held hero. (Inert is applied by
+            // that same chunk, so if it never ran there is nothing to release.)
+            setTimeout(function () {
+                document.documentElement.classList.remove("is-loading");
+                var overlay = document.querySelector("[data-intro-overlay]");
+                if (overlay) overlay.remove();
+                if (!window.__introDone) {
+                    window.__introDone = true;
+                    document.dispatchEvent(new CustomEvent("intro:done"));
+                }
+                // Mark the session here too. Only the module chunk normally does
+                // this, so if that chunk is what failed, every subsequent
+                // navigation would sit behind the overlay for another 8s.
+                try {
+                    sessionStorage.setItem("ar-intro-seen", "1");
+                } catch {
+                    /* storage blocked — non-fatal */
+                }
+            }, 8000);
+        </script>
     </head>
-    <body
-        class="flex min-h-screen flex-col bg-neutral-50 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-50 transition-colors">
+    <body class:list={["site-body", { "immersive-page": immersive }]}>
+        <div class="intro-overlay" data-intro-overlay aria-hidden="true">
+            <div class="intro-mark">
+                <span>Arthur Rodolfo</span>
+                <span>Vancouver</span>
+            </div>
+            <div>
+                <div class="intro-count"><span data-intro-count>00</span></div>
+                <div class="intro-bar" data-intro-bar></div>
+            </div>
+            <div class="intro-status">
+                <span>Product engineer</span>
+                <span data-intro-label>Loading</span>
+            </div>
+        </div>
+
+        <div class="cursor-layer" data-cursor-layer aria-hidden="true">
+            <span class="cursor-ring" data-cursor-ring></span>
+            <span class="cursor-label" data-cursor-labelbox></span>
+            <span class="cursor-dot" data-cursor-dot></span>
+        </div>
+
+        <div class="film-grain" aria-hidden="true"></div>
+
+        <a class="global-skip-link" href="#main-content">{t("skip.content")}</a>
         <Header />
-        <main class="flex-1 p-6 lg:p-12">
-            <slot />
-        </main>
-        <Footer />
+        {
+            immersive ? (
+                <div class="immersive-content"><slot /></div>
+            ) : (
+                <main id="main-content" class="standard-content"><slot /></main>
+            )
+        }
+        {!immersive && <Footer />}
+
+        <script>
+            import Lenis from "lenis";
+
+            // Global premium micro-interactions: restrained magnetic links +
+            // lightweight parallax. Runs on every full page load (the site uses
+            // native cross-document view transitions, not an SPA router).
+            const finePointer = window.matchMedia("(pointer: fine)").matches;
+            const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+            // --- Intro handoff -------------------------------------------------
+            // Components wait on this before playing their entrance beats.
+            const finishIntro = () => {
+                if (window.__introDone) return;
+                window.__introDone = true;
+                document.dispatchEvent(new CustomEvent("intro:done"));
+            };
+
+            const root = document.documentElement;
+            const overlay = document.querySelector<HTMLElement>("[data-intro-overlay]");
+
+            const dismissIntro = (immediate = false) => {
+                if (!overlay || overlay.dataset.state === "done") return;
+                try {
+                    sessionStorage.setItem("ar-intro-seen", "1");
+                } catch {
+                    /* non-fatal */
+                }
+
+                // Release the page on EVERY exit path. Doing this only on the
+                // animated branch left a background-tab first visit permanently
+                // inert — a fully rendered page where nothing was clickable.
+                contentRegions.forEach((region) => region.removeAttribute("inert"));
+
+                if (immediate) {
+                    root.classList.remove("is-loading");
+                    overlay.remove();
+                    finishIntro();
+                    return;
+                }
+
+                // Mark the exit state BEFORE dropping the class. The overlay's
+                // box is keyed on either one, so the curtain keeps its layout
+                // and the transform transition can actually run.
+                overlay.setAttribute("data-state", "done");
+                root.classList.remove("is-loading");
+                finishIntro();
+                window.setTimeout(() => overlay.remove(), 1200);
+            };
+
+            // While the overlay covers the page, nothing behind it should be
+            // tabbable — otherwise focus lands on controls painted underneath.
+            const contentRegions = Array.from(
+                document.querySelectorAll<HTMLElement>(
+                    ".site-header, .immersive-content, #main-content, .site-body > footer"
+                )
+            );
+
+            if (root.classList.contains("is-loading")) {
+                contentRegions.forEach((region) => region.setAttribute("inert", ""));
+            }
+
+            // Skip the intro entirely if the page opened in a background tab —
+            // rAF is paused there, and nobody is watching it anyway.
+            if (root.classList.contains("is-loading") && overlay && !document.hidden) {
+                const countEl = overlay.querySelector<HTMLElement>("[data-intro-count]");
+                const barEl = overlay.querySelector<HTMLElement>("[data-intro-bar]");
+                const labelEl = overlay.querySelector<HTMLElement>("[data-intro-label]");
+                const started = performance.now();
+                const runDuration = 1500;
+                const hardCap = 4000;
+
+                let assetsReady = document.readyState === "complete";
+                window.addEventListener("load", () => {
+                    assetsReady = true;
+                });
+
+                // Once settled the loop must stop: otherwise the next frame
+                // recomputes the 92 ceiling and the counter visibly counts
+                // backwards, then keeps writing to detached nodes forever.
+                let finished = false;
+
+                const settle = () => {
+                    if (finished) return;
+                    finished = true;
+                    if (labelEl) labelEl.textContent = "Welcome";
+                    if (countEl) countEl.textContent = "100";
+                    if (barEl) barEl.style.setProperty("--intro-progress", "1");
+                    window.setTimeout(() => dismissIntro(), 260);
+                };
+
+                // Guaranteed exit path: setTimeout still fires when rAF is
+                // throttled, so the overlay can never trap the page.
+                const failsafe = window.setTimeout(settle, hardCap);
+
+                const tick = () => {
+                    if (finished) return;
+
+                    // Time-based, so the count reads the same at any frame rate.
+                    const elapsed = performance.now() - started;
+                    const eased = 1 - Math.pow(1 - Math.min(1, elapsed / runDuration), 3);
+
+                    // Hold just short of 100 until assets are actually in.
+                    const ceiling = assetsReady ? 100 : 92;
+                    const value = Math.min(ceiling, Math.round(eased * 100));
+
+                    if (countEl) countEl.textContent = String(value).padStart(2, "0");
+                    if (barEl) barEl.style.setProperty("--intro-progress", String(value / 100));
+
+                    if (value >= 100 && elapsed >= runDuration) {
+                        window.clearTimeout(failsafe);
+                        settle();
+                        return;
+                    }
+
+                    requestAnimationFrame(tick);
+                };
+
+                requestAnimationFrame(tick);
+            } else {
+                dismissIntro(true);
+            }
+
+            // --- Shared hero across page transitions ---------------------------
+            // Only name the element while it is actually on screen, so the morph
+            // happens when both pages show a hero and degrades to the curtain
+            // otherwise.
+            const heroMedia = document.querySelector<HTMLElement>(
+                "[data-hero-media], [data-inner-hero-media]"
+            );
+
+            if (heroMedia && !reduceMotion) {
+                const heroObserver = new IntersectionObserver(
+                    (entries) => {
+                        entries.forEach((entry) => {
+                            heroMedia.style.viewTransitionName = entry.isIntersecting
+                                ? "page-hero-media"
+                                : "";
+                        });
+                    },
+                    { threshold: 0.15 }
+                );
+                heroObserver.observe(heroMedia);
+            }
+
+            // Inertia scrolling only earns its keep on a mouse wheel. On touch
+            // the native scroller is better and the rAF loop is pure tax on the
+            // devices with the least headroom.
+            if (!reduceMotion && finePointer) {
+                // --- Inertia scrolling ------------------------------------------
+                const lenis = new Lenis({
+                    duration: 1.15,
+                    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                    smoothWheel: true,
+                    touchMultiplier: 1.7,
+                });
+
+                window.__arLenis = lenis;
+
+                // --- Velocity-driven typography ---------------------------------
+                // Written on the handful of kinetic elements, never on <html>:
+                // a custom property on the root invalidates computed style for
+                // every element in the document, every frame.
+                const kinetic = Array.from(document.querySelectorAll<HTMLElement>("[data-kinetic]"));
+                const maxSkew = 2.2;
+                let targetSkew = 0;
+                let currentSkew = 0;
+                let lastWritten = "";
+
+                lenis.on("scroll", ({ velocity }: { velocity: number }) => {
+                    targetSkew = Math.max(-maxSkew, Math.min(maxSkew, velocity * 0.055));
+                });
+
+                const raf = (time: number) => {
+                    lenis.raf(time);
+
+                    // Smooth toward the target and settle back to flat at rest.
+                    currentSkew += (targetSkew - currentSkew) * 0.09;
+                    targetSkew *= 0.92;
+                    if (Math.abs(currentSkew) < 0.002) currentSkew = 0;
+
+                    const next = `${currentSkew.toFixed(3)}deg`;
+                    if (next !== lastWritten) {
+                        lastWritten = next;
+                        kinetic.forEach((el) => el.style.setProperty("--scroll-skew", next));
+                    }
+
+                    requestAnimationFrame(raf);
+                };
+                requestAnimationFrame(raf);
+
+                // Keep in-page anchors on the same easing curve. The skip link is
+                // excluded on purpose — preventDefault there would strip the
+                // native focus move and leave keyboard users back in the nav.
+                document
+                    .querySelectorAll<HTMLAnchorElement>('a[href^="#"]:not(.global-skip-link)')
+                    .forEach((anchor) => {
+                        anchor.addEventListener("click", (event) => {
+                            const target = anchor.getAttribute("href");
+                            if (!target || target.length < 2) return;
+                            const destination = document.querySelector<HTMLElement>(target);
+                            if (!destination) return;
+                            event.preventDefault();
+                            lenis.scrollTo(destination, { offset: 0 });
+                            // scrollTo moves pixels, not focus — do it ourselves.
+                            destination.setAttribute("tabindex", "-1");
+                            destination.focus({ preventScroll: true });
+                        });
+                    });
+            }
+
+            if (!reduceMotion) {
+                // --- Custom cursor ------------------------------------------------
+                const cursorLayer = document.querySelector<HTMLElement>("[data-cursor-layer]");
+                const cursorDot = document.querySelector<HTMLElement>("[data-cursor-dot]");
+                const cursorRing = document.querySelector<HTMLElement>("[data-cursor-ring]");
+                const cursorLabel = document.querySelector<HTMLElement>("[data-cursor-labelbox]");
+
+                if (finePointer && cursorLayer && cursorDot && cursorRing) {
+                    document.documentElement.classList.add("has-custom-cursor");
+
+                    let pointerX = window.innerWidth / 2;
+                    let pointerY = window.innerHeight / 2;
+                    let ringX = pointerX;
+                    let ringY = pointerY;
+
+                    document.addEventListener(
+                        "pointermove",
+                        (event) => {
+                            pointerX = event.clientX;
+                            pointerY = event.clientY;
+                            cursorDot.style.transform = `translate3d(${pointerX}px, ${pointerY}px, 0)`;
+                            // Reveal only once we know where the pointer is.
+                            if (!cursorLayer.hasAttribute("data-cursor-ready")) {
+                                ringX = pointerX;
+                                ringY = pointerY;
+                                cursorLayer.setAttribute("data-cursor-ready", "");
+                            }
+                        },
+                        { passive: true }
+                    );
+
+                    const trail = () => {
+                        // Skip the write entirely once the ring has caught up,
+                        // so a resting pointer costs nothing.
+                        if (Math.abs(pointerX - ringX) < 0.05 && Math.abs(pointerY - ringY) < 0.05) {
+                            requestAnimationFrame(trail);
+                            return;
+                        }
+
+                        // The ring lags slightly behind — that lag is the whole effect.
+                        ringX += (pointerX - ringX) * 0.16;
+                        ringY += (pointerY - ringY) * 0.16;
+                        // Write only the vars — the scale states live in CSS, and an
+                        // inline transform here would override them. Set on the
+                        // layer so the ring and the label both inherit them.
+                        cursorLayer.style.setProperty("--ring-x", `${ringX.toFixed(2)}px`);
+                        cursorLayer.style.setProperty("--ring-y", `${ringY.toFixed(2)}px`);
+                        requestAnimationFrame(trail);
+                    };
+                    requestAnimationFrame(trail);
+
+                    const interactive = 'a[href], button, select, [role="button"]';
+
+                    document.addEventListener("pointerover", (event) => {
+                        const target = event.target as Element | null;
+                        const hit = target?.closest?.(`${interactive}, [data-cursor-label]`);
+                        if (!hit) return;
+
+                        const label = hit.getAttribute("data-cursor-label");
+                        if (label && cursorLabel) {
+                            cursorLabel.textContent = label;
+                            cursorLayer.dataset.cursorState = "label";
+                        } else {
+                            cursorLayer.dataset.cursorState = "link";
+                        }
+                    });
+
+                    document.addEventListener("pointerout", (event) => {
+                        const target = event.target as Element | null;
+                        if (!target?.closest?.(`${interactive}, [data-cursor-label]`)) return;
+                        delete cursorLayer.dataset.cursorState;
+                    });
+
+                    // Hide the cursor when it leaves the window entirely.
+                    document.addEventListener("pointerleave", () => {
+                        cursorLayer.style.opacity = "0";
+                    });
+                    document.addEventListener("pointerenter", () => {
+                        cursorLayer.style.opacity = "1";
+                    });
+                }
+
+                // --- Magnetic links -------------------------------------------------
+                if (finePointer) {
+                    const magnets = document.querySelectorAll<HTMLElement>("[data-magnetic]");
+                    magnets.forEach((magnet) => {
+                        const strength = Number(magnet.dataset.magnetic || "0.28");
+                        const cap = 9;
+
+                        magnet.addEventListener("pointermove", (event) => {
+                            const rect = magnet.getBoundingClientRect();
+                            const relX = event.clientX - (rect.left + rect.width / 2);
+                            const relY = event.clientY - (rect.top + rect.height / 2);
+                            const tx = Math.max(-cap, Math.min(cap, relX * strength));
+                            const ty = Math.max(-cap, Math.min(cap, relY * strength));
+                            magnet.style.setProperty("--magnet-x", `${tx.toFixed(2)}px`);
+                            magnet.style.setProperty("--magnet-y", `${ty.toFixed(2)}px`);
+                        });
+
+                        const release = () => {
+                            magnet.style.setProperty("--magnet-x", "0px");
+                            magnet.style.setProperty("--magnet-y", "0px");
+                        };
+                        magnet.addEventListener("pointerleave", release);
+                        magnet.addEventListener("blur", release, true);
+                    });
+                }
+
+                // --- Generic parallax ----------------------------------------------
+                const parallaxTargets = Array.from(
+                    document.querySelectorAll<HTMLElement>("[data-parallax]")
+                );
+
+                if (parallaxTargets.length) {
+                    let ticking = false;
+
+                    const applyParallax = () => {
+                        const vh = window.innerHeight;
+                        parallaxTargets.forEach((el) => {
+                            const rect = el.getBoundingClientRect();
+                            if (rect.bottom < -vh || rect.top > vh * 2) return;
+                            const strength = Number(el.dataset.parallax || "26");
+                            const overscale = Number(el.dataset.parallaxScale || "1.06");
+                            const centerDelta = rect.top + rect.height / 2 - vh / 2;
+                            const p = centerDelta / (vh / 2 + rect.height / 2);
+                            const y = (-p * strength).toFixed(2);
+                            el.style.transform = `translate3d(0, ${y}px, 0) scale(${overscale})`;
+                        });
+                        ticking = false;
+                    };
+
+                    const requestParallax = () => {
+                        if (ticking) return;
+                        ticking = true;
+                        requestAnimationFrame(applyParallax);
+                    };
+
+                    window.addEventListener("scroll", requestParallax, { passive: true });
+                    window.addEventListener("resize", requestParallax, { passive: true });
+                    applyParallax();
+                }
+            }
+        </script>
     </body>
 </html>
 
 <style is:global>
-    ::selection {
-        background-color: var(--highlight-background-color);
-        color: var(--highlight-color);
+    .global-skip-link {
+        position: fixed;
+        top: 0.75rem;
+        left: 0.75rem;
+        /* Above the intro overlay (400) — otherwise an early tabber focuses it
+           behind the curtain and sees nothing. */
+        z-index: 500;
+        padding: 0.75rem 1rem;
+        background: var(--paper);
+        color: var(--ink);
+        font-weight: 700;
+        text-decoration: none;
+        transform: translateY(-180%);
+        transition: transform 180ms ease;
+    }
+
+    .global-skip-link:focus {
+        transform: translateY(0);
     }
 </style>
-
-<script is:inline>
-    const getThemePreference = () => {
-        if (
-            typeof localStorage !== "undefined" &&
-            localStorage.getItem("theme")
-        ) {
-            return localStorage.getItem("theme");
-        }
-
-        return window.matchMedia("(prefers-color-scheme: dark)").matches
-            ? "dark"
-            : "light";
-    };
-
-    const isDark = getThemePreference() === "dark";
-    document.documentElement.classList[isDark ? "add" : "remove"]("dark");
-
-    document.documentElement.style.setProperty(
-        "--highlight-color",
-        isDark ? "rgb(10, 10, 10)" : "rgb(250, 250, 250)"
-    );
-    document.documentElement.style.setProperty(
-        "--highlight-background-color",
-        isDark ? "rgb(245, 245, 245)" : "rgb(38, 38, 38)"
-    );
-
-    if (typeof localStorage !== "undefined") {
-        const observer = new MutationObserver(() => {
-            const isDark = document.documentElement.classList.contains("dark");
-            localStorage.setItem("theme", isDark ? "dark" : "light");
-
-            document.documentElement.style.setProperty(
-                "--highlight-color",
-                isDark ? "rgb(10, 10, 10)" : "rgb(250, 250, 250)"
-            );
-            document.documentElement.style.setProperty(
-                "--highlight-background-color",
-                isDark ? "rgb(245, 245, 245)" : "rgb(38, 38, 38)"
-            );
-        });
-
-        observer.observe(document.documentElement, {
-            attributes: true,
-            attributeFilter: ["class"],
-        });
-    }
-</script>

@@ -20,11 +20,11 @@ The project is organized as follows:
 |   |-- pages/
 ```
 
--   **src/components**: Images and videos used in the projects page as well as the the picture from the home.
+-   **src/assets**: Optimized media used by the site.
 
 -   **src/components**: This directory contains reusable components used throughout the website.
 
--   **src/components**: i18n translations and util functions.
+-   **src/i18n**: Translations and localization utilities.
 
 -   **src/layouts**: Layouts define the structure of your pages.
 

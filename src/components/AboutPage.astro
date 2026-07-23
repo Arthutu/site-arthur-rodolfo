@@ -1,0 +1,287 @@
+---
+import { Image } from "astro:assets";
+import EditorialContact from "./EditorialContact.astro";
+import CinematicPageHero from "./CinematicPageHero.astro";
+import aboutHero from "../assets/arthur-about-hero.webp";
+import lifestyleDetail from "../assets/arthur-lifestyle-detail.webp";
+
+const c = {
+    page: "About",
+    statement: "I’m Arthur, a product engineer in Vancouver.",
+    intro: "I came up through factory software in Brazil, and I still build like reliability is the point.",
+    nowLabel: "Today",
+    nowTitle: "The job is bigger than the code.",
+    nowBody: "My best work lives between product, design, and engineering. I care about understanding the real problem, choosing the right trade-offs, and carrying the details from the first conversation through production.",
+    originLabel: "Origin",
+    originLead: "Brazil shaped my drive.",
+    originBody: "I started in Control and Automation Engineering, expecting a career around industrial systems. Programming changed that direction. An internship building production traceability software became the beginning of a path through manufacturing, consulting, fintech, startups, and product platforms.",
+    humanLabel: "Beyond work",
+    humanTitle: "Games, gyms, and other systems.",
+    humanBody: "Gaming taught me to understand systems, adapt after failure, and keep refining the strategy. Training reinforces the same lesson: progress compounds when discipline becomes routine.",
+    lifestyleAlt: "Arthur Rodolfo writing in a notebook at a Vancouver café",
+} as const;
+
+---
+
+<div class="about-page-shell" data-inner-page>
+    <CinematicPageHero page={c.page} statement={c.statement} intro={c.intro} image={aboutHero} imagePosition="44% 42%" />
+
+    <main id="main-content" class="about-page">
+    <section class="about-now" aria-labelledby="about-now-title" data-header-theme="light" data-reveal>
+        <div class="page-label"><span>{c.nowLabel}</span></div>
+        <h2 id="about-now-title" data-kinetic>{c.nowTitle}</h2>
+        <p style="text-align: justify;">{c.nowBody}</p>
+    </section>
+
+    <section class="about-origin" aria-labelledby="about-origin-title" data-header-theme="dark" data-reveal>
+        <div class="page-label"><span>{c.originLabel}</span></div>
+        <h2 id="about-origin-title" data-kinetic>{c.originLead}</h2>
+        <p style="text-align: justify;">{c.originBody}</p>
+    </section>
+
+
+    <section class="about-human" aria-labelledby="about-human-title" data-header-theme="light" data-reveal>
+        <div class="page-label"><span>{c.humanLabel}</span></div>
+        <div class="about-human-layout">
+            <figure>
+                <Image
+                    src={lifestyleDetail}
+                    alt={c.lifestyleAlt}
+                    widths={[480, 640, 832, 1280, 1664]}
+                    quality={90}
+                    sizes="(max-width: 760px) 88vw, 38vw"
+                    loading="lazy"
+                />
+            </figure>
+            <div>
+                <h2 id="about-human-title" data-kinetic>{c.humanTitle}</h2>
+                <p>{c.humanBody}</p>
+            </div>
+        </div>
+    </section>
+
+    <EditorialContact />
+    </main>
+</div>
+
+<style>
+    .about-page-shell {
+        overflow: clip;
+        background: var(--ink);
+    }
+
+    .about-page {
+        background: var(--ink);
+        color: var(--paper);
+    }
+
+    .about-page-shell[data-motion="ready"] [data-reveal] {
+        opacity: 0.48;
+        transform: translateY(2rem);
+        transition: opacity 800ms ease, transform 950ms var(--ease-cinematic);
+    }
+
+    .about-page-shell[data-motion="ready"] [data-reveal][data-visible="true"] {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .about-page {
+        position: relative;
+        z-index: 1;
+        margin-top: -12svh;
+    }
+
+    .about-page > section:not(:last-child) {
+        padding: clamp(7rem, 13vw, 13rem) clamp(1.25rem, 5vw, 5.5rem);
+    }
+
+    /* Chapters overlap slightly and carry a lime wipe across each boundary. */
+    .about-page > section {
+        position: relative;
+    }
+
+    .about-page > section + section {
+        margin-top: -6svh;
+        box-shadow: 0 -2.5rem 6rem rgba(0, 0, 0, 0.42);
+    }
+
+    .about-page > section:not(:first-child)::before {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 0.3rem;
+        background: var(--accent);
+        content: "";
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 1000ms var(--ease-cinematic);
+    }
+
+    .about-page > section[data-visible="true"]::before {
+        transform: scaleX(1);
+    }
+
+    /* Soft light sources behind the flat dark chapters. The isolate is what
+       lets the z-index:-1 pseudo sit above the section background. */
+    .about-origin {
+        isolation: isolate;
+    }
+
+    .about-origin::after {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background:
+            radial-gradient(56% 44% at 86% 10%, rgba(210, 255, 63, 0.085), transparent 68%),
+            radial-gradient(50% 40% at 6% 90%, rgba(126, 158, 255, 0.07), transparent 70%);
+        content: "";
+        pointer-events: none;
+    }
+
+    .page-label {
+        display: flex;
+        justify-content: space-between;
+        padding-bottom: 1.35rem;
+        border-bottom: 1px solid currentColor;
+        color: var(--muted);
+        font-size: 0.68rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+    }
+
+    .about-now > p,
+    .about-origin > p,
+    .about-human-layout p {
+        width: min(41rem, 92%);
+        margin: 0 0 0 auto;
+        color: var(--muted);
+        font-size: clamp(1.15rem, 1.8vw, 1.6rem);
+        line-height: 1.45;
+        letter-spacing: -0.025em;
+    }
+
+    .about-now,
+    .about-human {
+        min-height: 100svh;
+        background: var(--paper);
+        color: var(--ink);
+    }
+
+    .about-now .page-label,
+    .about-human .page-label {
+        color: #66645f;
+    }
+
+    .about-now h2,
+    .about-origin h2,
+    .about-human-layout h2 {
+        max-width: 12ch;
+        margin: clamp(5rem, 11vw, 10rem) 0;
+        overflow-wrap: break-word;
+        -webkit-hyphens: auto;
+        hyphens: auto;
+        font-family: var(--font-display);
+        font-size: clamp(3.5rem, 9vw, 10rem);
+        font-weight: 560;
+        line-height: 0.94;
+        letter-spacing: -0.045em;
+    }
+
+    .about-now > p,
+    .about-human-layout p {
+        color: #53514d;
+    }
+
+    .about-human-layout {
+        display: grid;
+        grid-template-columns: minmax(16rem, 0.72fr) minmax(24rem, 1fr);
+        gap: clamp(2rem, 7vw, 8rem);
+        align-items: end;
+        margin-top: clamp(4rem, 8vw, 8rem);
+    }
+
+    .about-human-layout figure {
+        margin: 0;
+        overflow: hidden;
+        aspect-ratio: 4 / 5;
+        background: #d8d5cd;
+    }
+
+    .about-human-layout figure :global(img) {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 42%;
+        filter: saturate(0.82) contrast(1.02);
+    }
+
+    /* The portrait reveals through a shifting frame (letterbox → full)
+       with a slow scale settle, instead of an ordinary fade. */
+    .about-page-shell[data-motion="ready"] .about-human-layout figure {
+        clip-path: inset(30% 0 30% 0);
+        transition: clip-path 1300ms var(--ease-emphasized);
+    }
+
+    .about-page-shell[data-motion="ready"] .about-human-layout figure :global(img) {
+        transform: scale(1.14);
+        transition: transform 1500ms var(--ease-emphasized);
+    }
+
+    .about-page-shell[data-motion="ready"] .about-human[data-visible="true"] figure {
+        clip-path: inset(0 0 0 0);
+    }
+
+    .about-page-shell[data-motion="ready"] .about-human[data-visible="true"] figure :global(img) {
+        transform: scale(1);
+    }
+
+    .about-human-layout h2 {
+        margin-top: 0;
+    }
+
+    .about-human-layout p {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .about-origin {
+        min-height: 110svh;
+        background: #171714;
+    }
+
+    .about-origin h2 {
+        color: var(--accent);
+    }
+
+    @media (max-width: 760px) {
+        .about-now > p,
+        .about-origin > p,
+        .about-human-layout p {
+            width: 100%;
+        }
+
+        .about-now,
+        .about-origin,
+        .about-human {
+            min-height: auto;
+        }
+
+        .about-now h2,
+    .about-origin h2,
+    .about-human-layout h2 {
+            margin-block: 5rem 3rem;
+            font-size: clamp(2.6rem, 13vw, 6rem);
+        }
+
+        .about-human-layout {
+            grid-template-columns: 1fr;
+            margin-top: 3rem;
+        }
+
+        .about-human-layout figure {
+            width: min(88vw, 32rem);
+        }
+    }
+</style>

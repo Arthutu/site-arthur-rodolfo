@@ -1,0 +1,1033 @@
+---
+import { Image } from "astro:assets";
+import EditorialContact from "./EditorialContact.astro";
+import homeHero from "../assets/arthur-home-hero.webp";
+
+const c = {
+    eyebrow: "Product engineer",
+    intro: "I turn ambiguous ideas into reliable software",
+    introDetail: "I work where product judgment, technical depth, and craft meet. Shaping useful experiences and the systems behind them.",
+    scroll: "Enter",
+    chapterOne: "Point of view",
+    beliefLead: "Most software fails before the code.",
+    belief: "It fails in the framing. The wrong problem, the unexamined trade-off, the detail nobody owned. That is the part of the job I take personally.",
+    principleOne: "Name the problem before the solution",
+    principleTwo: "Boring where it counts, sharp where it shows",
+    principleThree: "Ship it, then stay with it",
+    chapterTwo: "The work",
+    workTitle: "The work, in four parts.",
+    work: [
+        { index: "01", title: "Product", body: "Deciding what not to build. Three years at Hubly owning onboarding, configurable forms and workflow automation." },
+        { index: "02", title: "Systems", body: "Distributed systems that keep data consistent across products. The platform work I do at Clio today." },
+        { index: "03", title: "Intelligence", body: "Agents do the fast part. I stay on the hook for the ownership and quality of everything they touch." },
+        { index: "04", title: "Leadership", body: "Raising the quality of decisions around me, and helping the people I work with get better at making them." },
+    ],
+    chapterThree: "Trajectory",
+    origin: "From factory floors in Brazil…",
+    present: "…to product platforms in Canada.",
+    future: "Next: leading the teams that build them.",
+    futureDetail: "I want the problems where product judgment and systems work collide, and a team to grow alongside while solving them.",
+} as const;
+
+---
+
+<div class="cinematic-home" data-home>
+    <section class="hero" aria-labelledby="hero-title" data-hero data-header-theme="dark">
+        <div class="hero-stage">
+            <div class="hero-media" aria-hidden="true" data-hero-media>
+                <Image
+                    src={homeHero}
+                    alt=""
+                    widths={[640, 960, 1280, 1920, 2560]}
+                    quality={90}
+                    sizes="100vw"
+                    loading="eager"
+                    class="hero-photo"
+                />
+                <div class="hero-vignette"></div>
+            </div>
+
+            <div class="hero-grid" aria-hidden="true"></div>
+            <div class="hero-transition-shade" aria-hidden="true"></div>
+
+            <h1 id="hero-title" class="hero-title" aria-label="Arthur Rodolfo">
+                <span class="hero-line hero-line-first" data-name-line><span class="hero-line-inner">Arthur</span></span>
+                <span class="hero-line hero-line-second" data-name-line><span class="hero-line-inner">Rodolfo</span></span>
+            </h1>
+
+            <div class="hero-intro" data-hero-copy>
+                <p class="hero-kicker">{c.eyebrow}</p>
+                <p>{c.intro}</p>
+            </div>
+        </div>
+    </section>
+
+    <main id="main-content">
+        <section class="statement-section chapter" data-first-chapter data-header-theme="light">
+            <span class="chapter-watermark" aria-hidden="true">01</span>
+            <div class="chapter-label">
+                <span>{c.chapterOne}</span>
+            </div>
+
+            <div class="statement-copy" data-kinetic>
+                <p class="statement-lead">{c.beliefLead}</p>
+                <p>{c.belief}</p>
+            </div>
+
+            <p class="intro-detail">{c.introDetail}</p>
+        </section>
+
+        <section class="work-section chapter" data-reveal data-header-theme="dark">
+            <span class="chapter-watermark" aria-hidden="true">02</span>
+            <div class="chapter-label">
+                <span>{c.chapterTwo}</span>
+            </div>
+
+            <header class="work-header">
+                <h2 data-kinetic>{c.workTitle}</h2>
+            </header>
+
+            <ol class="disciplines">
+                {c.work.map((item) => (
+                    <li class="discipline" data-discipline>
+                        <span class="discipline-index">{item.index}</span>
+                        <h3>{item.title}</h3>
+                        <p>{item.body}</p>
+                    </li>
+                ))}
+            </ol>
+        </section>
+
+        <section class="trajectory-section chapter" data-reveal data-header-theme="dark">
+            <span class="chapter-watermark" aria-hidden="true">03</span>
+            <div class="chapter-label trajectory-label">
+                <span>{c.chapterThree}</span>
+            </div>
+
+            <div class="trajectory-lines" data-kinetic>
+                <p>{c.origin}</p>
+                <p>{c.present}</p>
+                <p class="trajectory-highlight">{c.future}</p>
+            </div>
+
+            <p class="trajectory-detail">{c.futureDetail}</p>
+        </section>
+
+        <EditorialContact />
+    </main>
+</div>
+
+<script>
+    const home = document.querySelector<HTMLElement>("[data-home]");
+
+    if (home && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        home.setAttribute("data-motion", "ready");
+
+        // The opening beats wait for the intro sequence to lift.
+        const startOpening = () => home.setAttribute("data-intro", "done");
+        if (window.__introDone) {
+            startOpening();
+        } else {
+            document.addEventListener("intro:done", startOpening, { once: true });
+        }
+        const hero = home.querySelector<HTMLElement>("[data-hero]");
+        const media = home.querySelector<HTMLElement>("[data-hero-media]");
+        const firstChapter = home.querySelector<HTMLElement>("[data-first-chapter]");
+        const nameLines = home.querySelectorAll<HTMLElement>("[data-name-line]");
+        const heroCopy = home.querySelectorAll<HTMLElement>("[data-hero-copy]");
+        let ticking = false;
+        let lastProgress = -1;
+
+        const updateHero = () => {
+            if (!hero || !media) return;
+
+            // --- Reads first. Interleaving them with the writes below forced a
+            // synchronous reflow every frame. ---
+            const rect = hero.getBoundingClientRect();
+            const heroHeight = hero.offsetHeight;
+
+            const available = Math.max(1, heroHeight - window.innerHeight);
+            const progress = Math.min(1, Math.max(0, -rect.top / available));
+            const reveal = Math.min(1, progress * 1.45);
+            const chapterProgress = Math.min(1, Math.max(0, (progress - 0.68) / 0.32));
+            const mobile = window.innerWidth <= 760;
+            const horizontalInset = mobile ? 8 : 22;
+
+            // --- Writes. ---
+            // Once the hero is fully scrolled past, its ~15 per-frame style
+            // writes are all identical — skip them for the rest of the page.
+            const heroSettled = progress === 1 && lastProgress === 1;
+            lastProgress = progress;
+
+            if (heroSettled) {
+                ticking = false;
+                return;
+            }
+
+            home.style.setProperty("--chapter-progress", chapterProgress.toFixed(3));
+            media.style.opacity = String(reveal * 0.93 * (1 - chapterProgress * 0.48));
+            media.style.clipPath = `inset(${(1 - reveal) * 40}% ${(1 - reveal) * horizontalInset}%)`;
+            media.style.transform = `scale(${1.16 - reveal * 0.16 + chapterProgress * 0.075})`;
+
+            nameLines.forEach((line, index) => {
+                const direction = index === 0 ? -1 : 1;
+                const horizontalTravel = mobile ? 2.5 : 9;
+                const verticalTravel = mobile ? 10 : 16;
+                line.style.transform = `translate3d(${direction * progress * horizontalTravel}vw, ${-progress * verticalTravel}vh, 0)`;
+                line.style.opacity = String(1 - chapterProgress * 0.94);
+            });
+
+            // Leave the intro elements to the CSS entrance sequence while the
+            // hero is at rest; only take over their opacity once scrolling starts.
+            if (progress > 0.001) {
+                const copyOpacity = Math.max(0, 1 - progress * 2.2);
+                heroCopy.forEach((element) => {
+                    element.style.opacity = String(copyOpacity);
+                    // Faded-out controls must leave the tab order, or Tab lands
+                    // focus on an invisible link and yanks the page back up.
+                    element.toggleAttribute("inert", copyOpacity < 0.05);
+                });
+            }
+
+            if (firstChapter) {
+                firstChapter.style.setProperty("--chapter-local-progress", chapterProgress.toFixed(3));
+                firstChapter.style.setProperty("--chapter-offset", `${(1 - chapterProgress) * (mobile ? 6 : 10)}svh`);
+                firstChapter.style.setProperty("--watermark-offset", `${(1 - chapterProgress) * (mobile ? 3 : 5)}rem`);
+            }
+
+            ticking = false;
+        };
+
+        const requestUpdate = () => {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(updateHero);
+        };
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.setAttribute("data-visible", "true");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            { threshold: 0.16 }
+        );
+
+        home.querySelectorAll("[data-reveal], [data-discipline]").forEach((element) => observer.observe(element));
+
+        // Once each opening beat lands, drop its animation so scroll-driven
+        // inline styles (opacity, transform) take back control cleanly.
+        home
+            .querySelectorAll<HTMLElement>(".hero-grid, .hero-meta, .hero-intro, .hero-line-inner")
+            .forEach((element) => {
+                element.addEventListener(
+                    "animationend",
+                    () => {
+                        element.style.animation = "none";
+                    },
+                    { once: true }
+                );
+            });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate, { passive: true });
+        updateHero();
+    }
+</script>
+
+<style>
+    .cinematic-home {
+        --chapter-progress: 0;
+        background: var(--ink);
+        color: var(--paper);
+        overflow: clip;
+    }
+
+    .hero {
+        position: relative;
+        height: 185svh;
+        background: var(--ink);
+    }
+
+    .hero-stage {
+        position: sticky;
+        top: 0;
+        height: 100svh;
+        min-height: 42rem;
+        overflow: hidden;
+        isolation: isolate;
+    }
+
+    /* Base state is visible so the photo still shows without JS; the scroll
+       choreography only takes over once motion is actually running. */
+    .hero-media {
+        position: absolute;
+        inset: 0;
+        z-index: -3;
+        opacity: 0.48;
+        filter: saturate(0.72) contrast(1.04);
+    }
+
+    [data-home][data-motion="ready"] .hero-media {
+        opacity: 0;
+        clip-path: inset(40% 22%);
+        transform: scale(1.16);
+    }
+
+    .hero-photo {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 39%;
+    }
+
+    .hero-vignette {
+        position: absolute;
+        inset: 0;
+        background:
+            linear-gradient(180deg, rgba(8, 8, 7, 0.62), transparent 32%, rgba(8, 8, 7, 0.28)),
+            linear-gradient(90deg, rgba(8, 8, 7, 0.32), transparent 45%, rgba(8, 8, 7, 0.15));
+    }
+
+    .hero-grid {
+        position: absolute;
+        inset: 0;
+        z-index: -2;
+        background-image:
+            linear-gradient(var(--line) 1px, transparent 1px),
+            linear-gradient(90deg, var(--line) 1px, transparent 1px);
+        background-size: 100% 25%, 25% 100%;
+        mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), transparent 82%);
+        opacity: 0.35;
+    }
+
+    .hero-transition-shade {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background:
+            linear-gradient(180deg, transparent 42%, rgba(8, 8, 7, 0.46) 72%, #080807 100%),
+            rgba(8, 8, 7, 0.36);
+        opacity: var(--chapter-progress);
+        pointer-events: none;
+    }
+
+    .hero-meta {
+        position: absolute;
+        top: 6.75rem;
+        left: clamp(1.25rem, 3vw, 3rem);
+        right: clamp(1.25rem, 3vw, 3rem);
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        font-size: 0.65rem;
+        line-height: 1;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+    }
+
+    .hero-title {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin: 0;
+        padding: 0 clamp(1rem, 2.25vw, 2.75rem);
+        font-family: var(--font-display);
+        font-size: clamp(4.7rem, 16.9vw, 19rem);
+        font-weight: 700;
+        line-height: 0.78;
+        letter-spacing: -0.055em;
+        text-transform: uppercase;
+        pointer-events: none;
+    }
+
+    .hero-line {
+        display: block;
+        will-change: transform;
+    }
+
+    .hero-line-inner {
+        display: inline-block;
+    }
+
+    .hero-line-second {
+        align-self: flex-end;
+        padding-right: 0.06em;
+    }
+
+    /* Act two: the name reveals through masks from opposite directions. */
+    [data-home][data-motion="ready"]:not([data-intro="done"]) .hero-line-first .hero-line-inner {
+        clip-path: inset(0 100% 0 0);
+    }
+
+    [data-home][data-motion="ready"]:not([data-intro="done"]) .hero-line-second .hero-line-inner {
+        clip-path: inset(0 0 0 100%);
+    }
+
+    [data-home][data-motion="ready"][data-intro="done"] .hero-line-first .hero-line-inner {
+        animation: mask-reveal-left 1150ms var(--ease-mask) 350ms both;
+    }
+
+    [data-home][data-motion="ready"][data-intro="done"] .hero-line-second .hero-line-inner {
+        animation: mask-reveal-right 1150ms var(--ease-mask) 480ms both;
+    }
+
+    @keyframes mask-reveal-left {
+        from {
+            clip-path: inset(0 100% 0 0);
+            transform: translateY(0.16em);
+        }
+        to {
+            clip-path: inset(0 0 0 0);
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes mask-reveal-right {
+        from {
+            clip-path: inset(0 0 0 100%);
+            transform: translateY(0.16em);
+        }
+        to {
+            clip-path: inset(0 0 0 0);
+            transform: translateY(0);
+        }
+    }
+
+    .hero-kicker {
+        margin-bottom: 0.7rem;
+        color: var(--accent);
+        font-size: 0.66rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+    }
+
+    .hero-intro {
+        position: absolute;
+        right: clamp(1.25rem, 3vw, 3rem);
+        bottom: clamp(5rem, 10vh, 8rem);
+        width: min(27rem, 44vw);
+        font-size: clamp(1.15rem, 1.65vw, 1.7rem);
+        line-height: 1.18;
+        letter-spacing: -0.025em;
+    }
+
+    .scroll-line {
+        width: 4rem;
+        height: 1px;
+        background: currentColor;
+        transform-origin: left;
+        animation: scan 2s var(--ease-scan) infinite;
+    }
+
+    /* Three-act opening sequence — held until the intro overlay lifts.
+       The hold only applies pre-handoff, so once the animation finishes
+       (and is stripped) elements fall back to their natural resting state. */
+    [data-home][data-motion="ready"]:not([data-intro="done"]) .hero-grid,
+    [data-home][data-motion="ready"]:not([data-intro="done"]) .hero-meta,
+    [data-home][data-motion="ready"]:not([data-intro="done"]) .hero-intro {
+        opacity: 0;
+    }
+
+    /* Act one — the grid and metadata settle in first. */
+    [data-home][data-motion="ready"][data-intro="done"] .hero-grid {
+        animation: grid-in 1500ms var(--ease-cinematic) both;
+    }
+
+    [data-home][data-motion="ready"][data-intro="done"] .hero-meta {
+        animation: copy-rise 900ms var(--ease-cinematic) 150ms both;
+    }
+
+    /* Act three — supporting copy arrives after the name. */
+    [data-home][data-motion="ready"][data-intro="done"] .hero-intro {
+        animation: copy-rise 1000ms var(--ease-cinematic) 980ms both;
+    }
+
+    @keyframes grid-in {
+        from {
+            opacity: 0;
+            transform: scale(1.04);
+        }
+        to {
+            opacity: 0.35;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes copy-rise {
+        from {
+            opacity: 0;
+            transform: translateY(1.1rem);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .chapter {
+        position: relative;
+        padding: clamp(6rem, 13vw, 13rem) clamp(1.25rem, 5vw, 5.5rem);
+    }
+
+    .chapter-label {
+        display: flex;
+        justify-content: space-between;
+        padding-bottom: 1.35rem;
+        border-bottom: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.65rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+    }
+
+    .statement-section {
+        --chapter-local-progress: 0;
+        --chapter-offset: 10svh;
+        --watermark-offset: 5rem;
+        z-index: 2;
+        min-height: 120svh;
+        margin-top: -22svh;
+        background: var(--paper);
+        color: var(--ink);
+        box-shadow: 0 -3rem 8rem rgba(0, 0, 0, 0.28);
+        transform: translate3d(0, var(--chapter-offset), 0);
+        transform-origin: center bottom;
+    }
+
+    .statement-section::before {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 0.35rem;
+        background: var(--accent);
+        content: "";
+        transform: scaleX(var(--chapter-local-progress));
+        transform-origin: left;
+    }
+
+    .chapter-watermark {
+        position: absolute;
+        top: clamp(1.5rem, 3vw, 3rem);
+        right: clamp(0.5rem, 2vw, 2rem);
+        /* Behind the chapter's content but above its background — every
+           chapter section establishes its own stacking context. */
+        z-index: -1;
+        color: var(--watermark-ink, rgba(10, 10, 9, 0.045));
+        font-family: var(--font-display);
+        font-size: clamp(11rem, 31vw, 35rem);
+        font-weight: 700;
+        line-height: 0.72;
+        letter-spacing: -0.07em;
+        pointer-events: none;
+        /* Fallbacks matter: only the first chapter gets these driven by the
+           scroll script, so chapters 02 and 03 need a defined resting state. */
+        transform: translate3d(0, var(--watermark-offset, 0), 0);
+        opacity: var(--chapter-local-progress, 1);
+    }
+
+    /* Ink-on-ivory inverts to paper-on-dark for the two dark chapters. */
+    .work-section,
+    .trajectory-section {
+        --watermark-ink: rgba(240, 238, 232, 0.05);
+    }
+
+    /* This chapter's heading band is opaque and, while pinned, travels the
+       whole length of the section — anything behind it gets sliced by a moving
+       hard edge. Lift the numeral above the band instead. At 5% alpha it reads
+       as texture over the heading rather than as an element in front of it. */
+    .work-section .chapter-watermark {
+        z-index: 3;
+    }
+
+    .statement-section .chapter-label {
+        border-color: rgba(10, 10, 9, 0.18);
+        color: #66645f;
+    }
+
+    .statement-copy {
+        width: min(72rem, 94%);
+        margin: clamp(5rem, 12vw, 11rem) 0 0 auto;
+        font-family: var(--font-display);
+    }
+
+    /* The lead is the chapter's statement — display scale, tight leading.
+       Was #99968f — 2.5:1 on ivory, failing even the large-text threshold. */
+    .statement-lead {
+        color: #767370;
+        font-size: clamp(2.4rem, 6.5vw, 7.2rem);
+        font-weight: 500;
+        line-height: 1.04;
+        letter-spacing: -0.035em;
+        text-wrap: balance;
+    }
+
+    /* The paragraph under it is a sentence to read, not a headline. At the
+       lead's size with 1.02 leading it was a wall of type — drop the scale,
+       open the leading, and cap the measure. */
+    .statement-copy > p + p {
+        max-width: 30ch;
+        margin-top: clamp(1.75rem, 3.5vw, 3.25rem);
+        font-size: clamp(1.4rem, 2.9vw, 3.05rem);
+        font-weight: 480;
+        line-height: 1.28;
+        letter-spacing: -0.015em;
+        /* Flush on both edges. Hyphenation is not optional here — justifying a
+           ~30ch measure without it stretches word spacing into rivers, which
+           reads worse than the rag it replaced. */
+        text-align: justify;
+        -webkit-hyphens: auto;
+        hyphens: auto;
+    }
+
+    .intro-detail {
+        width: min(34rem, 90%);
+        margin: clamp(4rem, 9vw, 8rem) 0 0 auto;
+        font-size: clamp(1.15rem, 1.8vw, 1.65rem);
+        line-height: 1.45;
+        letter-spacing: -0.025em;
+    }
+
+    .work-section {
+        position: relative;
+        z-index: 3;
+        min-height: 140svh;
+        margin-top: -7svh;
+        background: var(--ink);
+        box-shadow: 0 -2.5rem 6rem rgba(0, 0, 0, 0.45);
+    }
+
+    /* Lime chapter wipe — sweeps across the boundary as the chapter enters. */
+    .work-section::before,
+    .trajectory-section::before {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 0.3rem;
+        background: var(--accent);
+        content: "";
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 1000ms var(--ease-cinematic);
+    }
+
+    .work-section[data-visible="true"]::before,
+    .trajectory-section[data-visible="true"]::before {
+        transform: scaleX(1);
+    }
+
+    /* Depth from light rather than effects — soft off-screen sources keep
+       the flat black chapters from reading as dead space. */
+    /* One light source, spilling in from off-canvas: centred past the corner,
+       low alpha, with a mid stop so the falloff has nothing to band against.
+       Deliberately NOT applied to the work section — its sticky heading band
+       is opaque ink, so any wash behind it turned the band into a visible
+       rectangle. That chapter is flat ink end to end. */
+    .trajectory-section::after {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: radial-gradient(
+            130% 85% at 92% -20%,
+            rgba(210, 255, 63, 0.05),
+            rgba(210, 255, 63, 0.017) 38%,
+            transparent 72%
+        );
+        content: "";
+        pointer-events: none;
+    }
+
+    .work-header {
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(15rem, 1fr);
+        gap: 3rem;
+        align-items: end;
+        margin: clamp(5rem, 10vw, 9rem) 0;
+    }
+
+    /* The chapter heading stays briefly pinned while the disciplines
+       list scrolls underneath it. */
+    @media (min-width: 761px) {
+        .work-header {
+            --side-pad: clamp(1.25rem, 5vw, 5.5rem);
+            position: sticky;
+            top: 4.5rem;
+            z-index: 2;
+            align-items: end;
+            /* Bleed the band to the viewport edges. Confined to the content
+               column it read as a floating rectangle with two hard vertical
+               edges sitting on top of the glow. */
+            margin-inline: calc(-1 * var(--side-pad));
+            padding-inline: var(--side-pad);
+            margin-top: clamp(4rem, 8vw, 7rem);
+            margin-bottom: 0;
+            padding-block: clamp(2.5rem, 5vw, 4rem);
+            background: var(--ink);
+        }
+
+        /* Dissolve the bottom edge so the list passes under the heading
+           instead of being sliced by it. */
+        .work-header::after {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            left: 0;
+            height: clamp(2rem, 4vw, 3.5rem);
+            background: linear-gradient(to bottom, var(--ink), transparent);
+            content: "";
+            pointer-events: none;
+        }
+    }
+
+    .work-header h2 {
+        max-width: 13ch;
+        font-family: var(--font-display);
+        font-size: clamp(3.2rem, 8.2vw, 9rem);
+        font-weight: 550;
+        line-height: 0.92;
+        letter-spacing: -0.045em;
+    }
+
+    .work-header p {
+        max-width: 28rem;
+        color: var(--muted);
+        font-size: clamp(1.05rem, 1.45vw, 1.4rem);
+        line-height: 1.45;
+    }
+
+    .disciplines {
+        margin: 0;
+        padding: 0;
+        border-top: 1px solid var(--line);
+        list-style: none;
+    }
+
+    .discipline {
+        position: relative;
+        display: grid;
+        grid-template-columns: 4rem minmax(10rem, 0.85fr) minmax(18rem, 1fr);
+        gap: 2rem;
+        /* Centred rather than start-aligned: the three cells have wildly
+           different type sizes, so aligning their box tops still left the text
+           looking ragged. Baseline alignment would drop the two-line
+           description below the title's baseline — centring keeps the row
+           reading as one band. */
+        align-items: center;
+        padding: clamp(2rem, 4vw, 4rem) 0;
+        border-bottom: 1px solid var(--line);
+    }
+
+    /* Gated like every other reveal — ungated, a JS failure left these four
+       cards dimmed to 42% permanently. */
+    [data-home][data-motion="ready"] .discipline {
+        opacity: 0.42;
+        transform: translateY(1.25rem);
+        transition: opacity 700ms ease, transform 900ms var(--ease-cinematic);
+    }
+
+    [data-home][data-motion="ready"] .discipline[data-visible="true"] {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .discipline-index {
+        color: var(--muted);
+        font-size: 0.68rem;
+        letter-spacing: 0.15em;
+    }
+
+    .discipline h3 {
+        font-family: var(--font-display);
+        font-size: clamp(2rem, 4vw, 4.6rem);
+        font-weight: 520;
+        line-height: 0.96;
+        letter-spacing: -0.035em;
+    }
+
+    .discipline p {
+        max-width: 35rem;
+        color: var(--muted);
+        font-size: clamp(1rem, 1.35vw, 1.25rem);
+        line-height: 1.45;
+    }
+
+
+    .trajectory-section {
+        position: relative;
+        z-index: 4;
+        min-height: 118svh;
+        margin-top: -7svh;
+        background: #171714;
+        box-shadow: 0 -2.5rem 6rem rgba(0, 0, 0, 0.5);
+    }
+
+    /* The figure sits permanently full-bleed and the inset is faked with
+       clip-path. Animating width/margin/aspect-ratio instead relayed out the
+       whole document every frame — and because aspect-ratio changed the
+       element's height, the page's scroll height moved while scrolling, which
+       fought Lenis and read as jitter. clip-path costs no layout. */
+    .trajectory-lines {
+        margin-top: clamp(6rem, 13vw, 12rem);
+        font-family: var(--font-display);
+        font-size: clamp(2.9rem, 8vw, 9rem);
+        font-weight: 500;
+        line-height: 0.96;
+        letter-spacing: -0.045em;
+    }
+
+    .trajectory-lines p {
+        max-width: 13ch;
+    }
+
+    .trajectory-lines p:nth-child(2) {
+        margin-left: auto;
+        text-align: right;
+    }
+
+    .trajectory-highlight {
+        margin-top: clamp(5rem, 10vw, 9rem);
+        color: var(--accent);
+    }
+
+    .trajectory-detail {
+        width: min(38rem, 88%);
+        margin: clamp(4rem, 9vw, 8rem) 0 0 auto;
+        color: var(--muted);
+        font-size: clamp(1.15rem, 1.8vw, 1.6rem);
+        line-height: 1.45;
+        letter-spacing: -0.02em;
+    }
+
+    [data-home][data-motion="ready"] [data-reveal] {
+        opacity: 0.001;
+        transform: translateY(2.5rem);
+        transition: opacity 900ms ease, transform 1200ms var(--ease-cinematic);
+    }
+
+    [data-home][data-motion="ready"] [data-reveal][data-visible="true"] {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    @keyframes scan {
+        0%, 100% { transform: scaleX(0.22); opacity: 0.35; }
+        50% { transform: scaleX(1); opacity: 1; }
+    }
+
+    @media (max-width: 760px) {
+        .hero {
+            height: 150svh;
+        }
+
+        .hero-stage {
+            min-height: 38rem;
+        }
+
+        .hero-meta {
+            top: 5.75rem;
+        }
+
+        .hero-title {
+            justify-content: center;
+            padding: 0 1rem;
+            font-size: clamp(4rem, 23vw, 8.5rem);
+            line-height: 0.79;
+        }
+
+        .hero-line-second {
+            align-self: flex-start;
+            max-width: 100%;
+            font-size: 0.86em;
+            letter-spacing: -0.105em;
+        }
+
+        .hero-kicker {
+        margin-bottom: 0.7rem;
+        color: var(--accent);
+        font-size: 0.66rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+    }
+
+    .hero-intro {
+            right: 1.25rem;
+            bottom: 5.2rem;
+            width: calc(100% - 2.5rem);
+            font-size: 1.2rem;
+        }
+
+        .hero-photo {
+            object-position: 50% 50%;
+        }
+
+        .chapter {
+            padding-top: 6rem;
+            padding-bottom: 6rem;
+        }
+
+        .statement-section,
+        .work-section,
+        .trajectory-section {
+            min-height: auto;
+        }
+
+        .statement-section {
+            --chapter-offset: 6svh;
+            --watermark-offset: 3rem;
+            margin-top: -13svh;
+            transform: translate3d(0, var(--chapter-offset), 0);
+        }
+
+        .work-section,
+        .trajectory-section {
+            margin-top: -4svh;
+            box-shadow: 0 -1.5rem 4rem rgba(0, 0, 0, 0.4);
+        }
+
+        .chapter-watermark {
+            top: 2.75rem;
+            right: 0.25rem;
+            font-size: 48vw;
+        }
+
+        .statement-copy {
+            width: 100%;
+            margin-top: 5rem;
+        }
+
+        .statement-lead {
+            font-size: clamp(2.3rem, 10.5vw, 4.4rem);
+            line-height: 1.06;
+        }
+
+        .statement-copy > p + p {
+            max-width: none;
+            margin-top: 1.6rem;
+            font-size: clamp(1.15rem, 5vw, 1.7rem);
+            line-height: 1.42;
+            letter-spacing: -0.005em;
+        }
+
+        .intro-detail {
+            width: 100%;
+        }
+
+        .work-header {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin: 5rem 0;
+        }
+
+        .work-header h2 {
+            font-size: clamp(3.4rem, 15vw, 6rem);
+        }
+
+        .discipline {
+            grid-template-columns: 2rem 1fr;
+            gap: 1rem;
+        }
+
+        .discipline p {
+            grid-column: 2 / -1;
+        }
+
+        .trajectory-lines {
+            font-size: clamp(3.25rem, 14vw, 6rem);
+        }
+
+        .trajectory-detail {
+            width: 100%;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        /* Without the scroll choreography there is nothing to scroll through —
+           don't make reduced-motion users travel 85svh of frozen sticky hero. */
+        .hero {
+            height: 100svh;
+        }
+
+        .scroll-line {
+            animation: none;
+        }
+
+        .hero-media {
+            opacity: 0.48;
+            clip-path: none;
+            transform: none;
+        }
+
+        .hero-transition-shade {
+            opacity: 0;
+        }
+
+        .hero-line {
+            opacity: 1;
+        }
+
+        .statement-section {
+            margin-top: 0;
+            transform: none;
+        }
+
+        .statement-section::before,
+        .work-section::before,
+        .trajectory-section::before {
+            transform: scaleX(1);
+        }
+
+        .work-section,
+        .trajectory-section {
+            margin-top: 0;
+            box-shadow: none;
+        }
+
+        .chapter-watermark {
+            opacity: 0.05;
+            transform: none;
+        }
+
+        [data-reveal],
+        .discipline {
+            opacity: 1;
+            transform: none;
+            transition: none;
+        }
+    }
+
+    @media print {
+        .hero {
+            height: auto;
+        }
+
+        .statement-section,
+        .work-section,
+        .trajectory-section {
+            margin-top: 0;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .work-header {
+            position: static;
+        }
+
+        .hero-stage {
+            position: relative;
+            min-height: 46rem;
+        }
+
+        [data-reveal],
+        .discipline {
+            opacity: 1 !important;
+            transform: none !important;
+        }
+    }
+</style>
