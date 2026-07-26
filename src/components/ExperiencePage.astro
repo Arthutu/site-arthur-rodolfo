@@ -293,15 +293,19 @@ const experiences = shared.companies.map((company, index) => ({ ...company, ...c
         color: inherit;
         font-size: clamp(1rem, 1.35vw, 1.25rem);
         font-weight: 650;
+        /* Underline is hover-revealed via colour (paint-only) at a fixed
+           offset. Animating the offset or toggling the line grew the inline
+           box and reflowed the description below it. */
+        text-decoration: underline;
         text-decoration-thickness: 1px;
         text-underline-offset: 0.25em;
-        transition: text-underline-offset 250ms var(--ease-cinematic);
+        text-decoration-color: transparent;
+        transition: text-decoration-color 250ms var(--ease-cinematic);
     }
 
     .experience-content > a:hover,
     .experience-content > a:focus-visible {
-        text-underline-offset: 0.38em;
-        text-decoration: underline;
+        text-decoration-color: currentColor;
     }
 
     .experience-content > p {
