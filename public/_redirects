@@ -1,18 +1,31 @@
-# Cloudflare Pages redirects
-# The site was previously served under /en, /ptBR, /fr and /es. It is now
-# English-only at the root; these keep every previously indexed URL working.
-/en            /             301
-/ptBR          /             301
-/fr            /             301
-/es            /             301
-/en/about      /about        301
-/ptBR/about    /about        301
-/fr/about      /about        301
-/es/about      /about        301
-/en/experience /experience   301
-/ptBR/experience /experience 301
-/fr/experience /experience   301
-/es/experience /experience   301
-# retired section
-/projects      /             301
-/en/projects   /             301
+# Cloudflare Pages redirects.
+# The site is now English-only at the root. Every previously indexed locale
+# URL redirects to its new home. Cloudflare treats a trailing slash as a
+# distinct path, so the `*` splats are required — without them, forms like
+# /en/ fell through and served stale cached copies of the old site.
+
+# Section pages first so their sub-path is preserved (/en/about/ -> /about).
+/en/about*         /about        301
+/ptBR/about*       /about        301
+/fr/about*         /about        301
+/es/about*         /about        301
+
+/en/experience*    /experience   301
+/ptBR/experience*  /experience   301
+/fr/experience*    /experience   301
+/es/experience*    /experience   301
+
+# Everything else under a locale (including the bare /en/, /ptBR/, ...) -> home.
+/en/*              /             301
+/ptBR/*            /             301
+/fr/*              /             301
+/es/*              /             301
+
+# Locale roots without a trailing slash.
+/en                /             301
+/ptBR              /             301
+/fr                /             301
+/es                /             301
+
+# Retired section.
+/projects*         /             301
